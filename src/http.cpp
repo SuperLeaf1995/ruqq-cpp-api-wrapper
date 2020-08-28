@@ -28,7 +28,7 @@ std::string http_get(std::string url) {
 	return write_buffer;
 }
 
-std::string http_post(std::string url) {
+std::string http_post(std::string url, std::string data) {
 	write_buffer = "";
 	curlpp::Easy * easy_handle = new curlpp::Easy();
 	curlpp::types::WriteFunctionFunctor functor(&http_write_callback);
@@ -36,7 +36,10 @@ std::string http_post(std::string url) {
 	easy_handle->setOpt(write_cb_opt);
 	easy_handle->setOpt(new curlpp::options::Url(std::string(url)));
 	easy_handle->setOpt(new curlpp::options::UserAgent(std::string("NeverGonnaGiveYouUp/3.4")));
-	easy_handle->setOpt(new curlpp::options::HttpGet(false));
+	if(!data.empty()) {
+		easy_handle->setOpt(new curlpp::options::PostFields(data));
+		easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
+	}
 	easy_handle->perform();
 	return write_buffer;
 }
