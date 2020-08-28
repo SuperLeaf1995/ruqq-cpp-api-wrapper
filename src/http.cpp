@@ -7,6 +7,13 @@
 
 #include "http.hpp"
 
+std::string oauth_token;
+
+bool http_set_oauth_token(std::string token) {
+	oauth_token = token;
+	return true;
+}
+
 std::string write_buffer;
 std::mutex http_write_callback_mutex;
 size_t http_write_callback(void * ptr, size_t size, size_t nmemb) {
@@ -16,23 +23,43 @@ size_t http_write_callback(void * ptr, size_t size, size_t nmemb) {
 }
 
 std::string http_get(std::string url) {
+	// Write function
 	write_buffer = "";
 	curlpp::Easy * easy_handle = new curlpp::Easy();
 	curlpp::types::WriteFunctionFunctor functor(&http_write_callback);
 	curlpp::options::WriteFunction * write_cb_opt = new curlpp::options::WriteFunction(functor);
+	
+	// HTTP Headers
+	std::list<std::string> header;
+	header.push_back("User-Agent: NeverGonnaGiveYouUp/3.5");
+	if(!oauth_token.empty()) {
+		header.push_back("Authorization: Bearer "+oauth_token);
+	}
+	
+	// Perform request
 	easy_handle->setOpt(write_cb_opt);
 	easy_handle->setOpt(new curlpp::options::Url(std::string(url)));
-	easy_handle->setOpt(new curlpp::options::UserAgent(std::string("NeverGonnaGiveYouUp/3.4")));
+	easy_handle->setOpt(new curlpp::options::HttpHeader(header));
 	easy_handle->setOpt(new curlpp::options::HttpGet(true));
 	easy_handle->perform();
 	return write_buffer;
 }
 
 std::string http_post(std::string url, std::string data) {
+	// Write function
 	write_buffer = "";
 	curlpp::Easy * easy_handle = new curlpp::Easy();
 	curlpp::types::WriteFunctionFunctor functor(&http_write_callback);
 	curlpp::options::WriteFunction * write_cb_opt = new curlpp::options::WriteFunction(functor);
+	
+	// HTTP Headers
+	std::list<std::string> header;
+	header.push_back("User-Agent: NeverGonnaGiveYouUp/3.5");
+	if(!oauth_token.empty()) {
+		header.push_back("Authorization: Bearer "+oauth_token);
+	}
+	
+	// Perform request
 	easy_handle->setOpt(write_cb_opt);
 	easy_handle->setOpt(new curlpp::options::Url(std::string(url)));
 	easy_handle->setOpt(new curlpp::options::UserAgent(std::string("NeverGonnaGiveYouUp/3.4")));
