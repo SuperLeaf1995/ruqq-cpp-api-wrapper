@@ -7,9 +7,8 @@
 #include "comment.hpp"
 
 class Ruqqus {
-    private:
-        std::string server;
     public:
+		std::string server;
         RuqqusGuild guild_info(std::string guildname);
         RuqqusUser user_info(std::string username);
         RuqqusPost post_info(std::string post);
