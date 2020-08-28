@@ -21,7 +21,7 @@ class Ruqqus {
         RuqqusComment comment_info(std::string comment);
 
         bool guild_available(std::string guildname);
-        bool join_guild(std::string guildname);
+        bool guild_join(std::string guildname);
         
         void admin_ban_user(std::string uid, std::string reason);
 		void admin_unban_user(std::string uid);
