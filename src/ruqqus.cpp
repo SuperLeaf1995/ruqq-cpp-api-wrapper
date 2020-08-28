@@ -9,82 +9,8 @@
 #include "http.hpp"
 #include "ruqqus.hpp"
 
-/**
-Gets a post title
-
-@param postid The Id of the post
-@return Title of the post
-*/
-std::string Ruqqus::post_get_title(std::string postid) {
-	Json::Value val;
-	Json::Reader read;
-	bool r;
-	std::string server_response;
-	
-	server_response = http_get(server+"/api/submit/title?url="+postid);
-	
-	r = read.parse(server_response,val,false);
-	if(!r) {
-		throw std::runtime_error("Cannot parse JSON value");
-	}
-	
-	if(std::string::empty(val["error"])) 
-		throw std::runtime_error("Server trhew error");
-	}
-	
-	return val["title"].asString();
-}
-
-/**
-Deletes a post
-
-@param postid The Id of the post
-*/
-void Ruqqus::post_delete(std::string postid) {
-	http_post(server+"/delete_post/"+postid);
-	return;
-}
-
-/**
-Toggles a post to NSFW
-
-@param postid The Id of the post
-*/
-void Ruqqus::post_toggle_nsfw(std::string postid) {
-	http_post(server+"/api/toggle_post_nsfw/"+postid);
-	return post;
-}
-
-/**
-Toggles a post to NSFL
-
-@param postid The Id of the post
-*/
-void Ruqqus::post_toggle_nsfl(std::string postid) {
-	http_post(server+"/api/toggle_post_nsfl/"+postid);
-	return;
-}
-
-/**
-Gets the guild information from the official API
-
-@param guildname The name of the board/guils to obtain data from it
-*/
-RuqqusGuild Ruqqus::guild_info(std::string guildname) {
-	Json::Value val;
-	Json::Reader read;
-	std::string server_response;
-	bool r;
-
-	server_response = http_get(server+"/api/v1/guild/"+guildname);
-	r = read.parse(server_response,val,false);
-	if(!r) {
-		throw std::runtime_error("Cannot parse JSON value");
-	}
-
-	/* Copy values to the guild */
+RuqqusGuild Ruqqus::JSON_to_guild(Json::Value val) {
 	RuqqusGuild guild;
-
 	guild.banner_url = val["banner_url"].asString();
 	guild.color = val["color"].asString();
 	guild.created_utc = val["created_utc"].asLargestUInt();
@@ -101,29 +27,11 @@ RuqqusGuild Ruqqus::guild_info(std::string guildname) {
 	guild.permalink = val["permalink"].asString();
 	guild.profile_url = val["profile_url"].asString();
 	guild.subscriber_count = val["subscriber_count"].asLargestUInt();
-
 	return guild;
 }
 
-/**
-Obtains information about username and returns a RuqqusUser class
-
-@param username The name of the user to obtain information from it
-*/
-RuqqusUser Ruqqus::user_info(std::string username) {
-	Json::Value val;
-	Json::Reader read;
-	std::string server_response;
-	bool r;
-
-	server_response = http_get(server+"/api/v1/user/"+username);
-	r = read.parse(server_response,val,false);
-	if(!r) {
-		throw std::runtime_error("Cannot parse JSON value");
-	}
-
+RuqqusUser Ruqqus::JSON_to_user(Json::Value val) {
 	RuqqusUser user;
-
 	user.banner_url = val["banner_url"].asString();
 	user.bio = val["bio"].asString();
 	user.bio_html = val["bio_html"].asString();
@@ -137,7 +45,6 @@ RuqqusUser Ruqqus::user_info(std::string username) {
 	user.post_rep = val["post_rep"].asLargestUInt();
 	user.profile_url = val["profile_url"].asString();
 	user.username = val["username"].asString();
-
 	for(Json::Value::ArrayIndex i = 0; i != val["badges"].size(); i++) {
 		RuqqusBadges badge;
 
@@ -149,34 +56,15 @@ RuqqusUser Ruqqus::user_info(std::string username) {
 		user.badges.push_back(badge);
 	}
 	user.badges.shrink_to_fit();
-
 	user.title.color = val["title"]["color"].asString();
 	user.title.id = val["title"]["id"].asLargestUInt();
 	user.title.kind = val["title"]["kind"].asLargestUInt();
 	user.title.text = val["title"]["text"].asString();
-
 	return user;
 }
 
-/**
-Obtains information about the post and returns a RuqqusPost class
-
-@param postid The Id of the post to get information from it
-*/
-RuqqusPost Ruqqus::post_info(std::string postid) {
-	Json::Value val;
-	Json::Reader read;
-	std::string server_response;
-	bool r;
-
-	server_response = http_get(server+"/api/v1/pid/"+postid);
-	r = read.parse(server_response,val,false);
-	if(!r) {
-		throw std::runtime_error("Cannot parse JSON value");
-	}
-
+RuqqusPost Ruqqus::JSON_to_post(Json::Value val) {
 	RuqqusPost post;
-
 	post.author = val["author"].asString();
 	post.body = val["body"].asString();
 	post.body_html = val["body_html"].asString();
@@ -202,34 +90,15 @@ RuqqusPost Ruqqus::post_info(std::string postid) {
 	post.title = val["title"].asString();
 	post.upvotes = val["upvotes"].asLargestUInt();
 	post.url = val["url"].asString();
-
 	post.author_title.color = val["author_title"]["color"].asString();
 	post.author_title.id = val["author_title"]["id"].asLargestUInt();
 	post.author_title.kind = val["author_title"]["kind"].asLargestUInt();
 	post.author_title.text = val["author_title"]["text"].asString();
-
 	return post;
 }
 
-/**
-Obtains information about the comment and returns a RuqqusComment class
-
-@param commentid The Id of the comment to get information from it
-*/
-RuqqusComment Ruqqus::comment_info(std::string commentid) {
-	Json::Value val;
-	Json::Reader read;
-	std::string server_response;
-	bool r;
-
-	server_response = http_get(server+"/api/v1/cid/"+commentid);
-	r = read.parse(server_response,val,false);
-	if(!r) {
-		throw std::runtime_error("Cannot parse JSON value");
-	}
-
+RuqqusComment Ruqqus::JSON_to_comment(Json::Value val) {
 	RuqqusComment comment;
-
 	comment.author = val["author"].asString();
 	comment.body = val["body"].asString();
 	comment.body_html = val["body_html"].asString();
@@ -252,8 +121,87 @@ RuqqusComment Ruqqus::comment_info(std::string commentid) {
 	comment.score = val["score"].asLargestUInt();
 	comment.title = val["title"].asString();
 	comment.upvotes = val["upvotes"].asLargestUInt();
-
 	return comment;
+}
+
+/**
+Gets the guild information from the official API
+
+@param guildname The name of the board/guils to obtain data from it
+*/
+RuqqusGuild Ruqqus::guild_info(std::string guildname) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/v1/guild/"+guildname);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	return JSON_to_guild(val);
+}
+
+/**
+Obtains information about username and returns a RuqqusUser class
+
+@param username The name of the user to obtain information from it
+*/
+RuqqusUser Ruqqus::user_info(std::string username) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/v1/user/"+username);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+	
+	return JSON_to_user(val);
+}
+
+/**
+Obtains information about the post and returns a RuqqusPost class
+
+@param postid The Id of the post to get information from it
+*/
+RuqqusPost Ruqqus::post_info(std::string postid) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/v1/pid/"+postid);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	return JSON_to_post(val);
+}
+
+/**
+Obtains information about the comment and returns a RuqqusComment class
+
+@param commentid The Id of the comment to get information from it
+*/
+RuqqusComment Ruqqus::comment_info(std::string commentid) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/v1/cid/"+commentid);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	return JSON_to_comment(val);
 }
 
 /**
@@ -291,7 +239,7 @@ bool Ruqqus::guild_join(std::string guildname) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/board_available/"+guildname);
+	server_response = http_post(server+"/api/subscribe/"+guildname);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -303,6 +251,186 @@ bool Ruqqus::guild_join(std::string guildname) {
 	} else {
 		return true;
 	}
+}
+
+/**
+Leaves guild <guildname>
+
+@param guildname The name of the guild to leave
+@retval true Sucess
+*/
+bool Ruqqus::guild_leave(std::string guildname) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_post(server+"/api/unsubscribe/"+guildname);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	std::string str = val["message"].asString();
+	if(str.empty()) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/**
+Checks if username is available
+
+@param username Name of the user to be checked
+@retval false Not available
+@retval true User available
+*/
+bool Ruqqus::user_available(std::string username) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/is_available/"+username);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	return val[username].asBool();
+}
+
+/**
+Follows a user
+
+@param username The username of the user
+*/
+void Ruqqus::user_follow(std::string username) {
+	http_post(server+"/api/follow/"+username);
+	return;
+}
+
+/**
+Unfollows a user
+
+@param username The username of the user
+*/
+void Ruqqus::user_unfollow(std::string username) {
+	http_post(server+"/api/unfollow/"+username);
+	return;
+}
+
+/**
+Gets a post title
+
+@param postid The Id of the post
+@return Title of the post
+*/
+std::string Ruqqus::post_get_title(std::string postid) {
+	Json::Value val;
+	Json::Reader read;
+	bool r;
+	std::string server_response;
+	
+	server_response = http_get(server+"/api/submit/title?url="+postid);
+	
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+	
+	std::string str = val["error"].asString();
+	if(str.empty()) {
+		throw std::runtime_error("Server trhew error");
+	}
+	
+	return val["title"].asString();
+}
+
+/**
+Deletes a post
+
+@param postid The Id of the post
+*/
+void Ruqqus::post_delete(std::string postid) {
+	http_post(server+"/delete_post/"+postid);
+	return;
+}
+
+/**
+Toggles a post to NSFW
+
+@param postid The Id of the post
+*/
+void Ruqqus::post_toggle_nsfw(std::string postid) {
+	http_post(server+"/api/toggle_post_nsfw/"+postid);
+	return;
+}
+
+/**
+Toggles a post to NSFL
+
+@param postid The Id of the post
+*/
+void Ruqqus::post_toggle_nsfl(std::string postid) {
+	http_post(server+"/api/toggle_post_nsfl/"+postid);
+	return;
+}
+
+/**
+Votes for a post
+
+@param postid The Id of the post
+*/
+void Ruqqus::post_vote(std::string postid, signed char v) {
+	http_post(server+"/api/vote/post/"+postid+"/"+std::to_string(v));
+	return;
+}
+
+/*
+POST /api/comment (ratelimit 6/min, auth not required??) 
+POST /api/v1/delete/comment/<cid> (auth required, needs "delete" scope)
+GET /api/vi/embed/comment/<cid> (yes, "vi", opened a pr)
+GET /api/vi/embed/post/<pid>/comment/<cid> (also "vi")
+POST /api/flag/post/<pid>
+POST /api/flag/comment/<cid>
+GET /api/v1/front/listing
+GET /api/v1/all/listing
+GET /api/submit/title (ratelimit 3/min)
+GET /api/v1/user/<username>/listing
+POST /api/agree_tos
+*/
+
+/**
+Get a comment in post
+
+@param pid Id of the post
+@param cid Id of the comment IN post
+*/
+RuqqusComment Ruqqus::comment_get_in_post(std::string pid, std::string cid) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/v1/post/"+pid+"/comment/"+cid);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+	
+	return JSON_to_comment(val);
+}
+
+/**
+Votes for a comment
+
+@param cid The Id of the comment
+*/
+void Ruqqus::comment_vote(std::string cid, signed char v) {
+	http_post(server+"/api/vote/comment/"+cid+"/"+std::to_string(v));
+	return;
 }
 
 /**
@@ -413,7 +541,7 @@ Obatains all user status. Requires 2 admin privileges
 
 @param days N. of days of data to be received
 */
-void Ruqqus::admin_user_stat(uintmax_t days) {
+Json::Value Ruqqus::admin_user_stat(uintmax_t days) {
 	Json::Value val;
 	Json::Reader read;
 	bool r;
@@ -435,7 +563,7 @@ Deletes a post via CSAM nuke (any post can be deleted). Requires 4 admin privile
 @param postid The Id of the post
 */
 void Ruqqus::admin_csam_nuke(std::string postid) {
-	http_post(server+"/api/csam_nuke/"+postid);
+	http_post(server+"/admin/csam_nuke/"+postid);
 	return;
 }
 
@@ -448,14 +576,15 @@ void Ruqqus::admin_clear_cache() {
 	bool r;
 	std::string server_response;
 	
-	server_response = http_get(server+"/api/submit/title?url="+postid);
+	server_response = http_get(server+"/admin/dump_cache");
 	
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
 	}
 	
-	if(std::string::empty(val["message"])) 
+	std::string str = val["message"].asString();
+	if(str.empty()) {
 		throw std::runtime_error("Server trhrew invalid message");
 	}
 	

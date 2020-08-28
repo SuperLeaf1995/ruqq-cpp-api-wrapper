@@ -36,6 +36,7 @@ std::string http_post(std::string url) {
 	easy_handle->setOpt(write_cb_opt);
 	easy_handle->setOpt(new curlpp::options::Url(std::string(url)));
 	easy_handle->setOpt(new curlpp::options::UserAgent(std::string("NeverGonnaGiveYouUp/3.4")));
+	easy_handle->setOpt(new curlpp::options::HttpGet(false));
 	easy_handle->perform();
 	return write_buffer;
 }
