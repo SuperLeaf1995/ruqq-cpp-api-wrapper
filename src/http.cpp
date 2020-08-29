@@ -31,7 +31,7 @@ std::string http_get(std::string url) {
 	
 	// HTTP Headers
 	std::list<std::string> header;
-	header.push_back("User-Agent: NeverGonnaGiveYouUp/3.5");
+	header.push_back("User-Agent: ruqqusCpp/3.5");
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
 	}
@@ -54,7 +54,7 @@ std::string http_post(std::string url, std::string data) {
 	
 	// HTTP Headers
 	std::list<std::string> header;
-	header.push_back("User-Agent: NeverGonnaGiveYouUp/3.5");
+	header.push_back("User-Agent: ruqqusCpp/3.5");
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
 	}

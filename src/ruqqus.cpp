@@ -11,6 +11,11 @@
 #include "http.hpp"
 #include "ruqqus.hpp"
 
+/**
+Converts JSON value to RuqqusGuild object
+
+@param val Json value
+*/
 RuqqusGuild Ruqqus::JSON_to_guild(Json::Value val) {
 	RuqqusGuild guild;
 	guild.banner_url = val["banner_url"].asString();
@@ -32,6 +37,11 @@ RuqqusGuild Ruqqus::JSON_to_guild(Json::Value val) {
 	return guild;
 }
 
+/**
+Converts JSON value to RuqqusUser object
+
+@param val Json value
+*/
 RuqqusUser Ruqqus::JSON_to_user(Json::Value val) {
 	RuqqusUser user;
 	user.banner_url = val["banner_url"].asString();
@@ -65,6 +75,11 @@ RuqqusUser Ruqqus::JSON_to_user(Json::Value val) {
 	return user;
 }
 
+/**
+Converts JSON to RuqqusPost object
+
+@param val Json value
+*/
 RuqqusPost Ruqqus::JSON_to_post(Json::Value val) {
 	RuqqusPost post;
 	post.author = val["author"].asString();
@@ -99,6 +114,11 @@ RuqqusPost Ruqqus::JSON_to_post(Json::Value val) {
 	return post;
 }
 
+/**
+Converts comment to RuqqusComment
+
+@param val Json value
+*/
 RuqqusComment Ruqqus::JSON_to_comment(Json::Value val) {
 	RuqqusComment comment;
 	comment.author = val["author"].asString();
@@ -419,6 +439,13 @@ RuqqusComment Ruqqus::comment_get_in_post(std::string pid, std::string cid) {
 	return JSON_to_comment(val);
 }
 
+/*
+Administrative functions
+
+These functions have not been tested, but with the correct admin levels
+it should work theorically.
+*/
+
 /**
 Votes for a comment
 
@@ -588,7 +615,7 @@ void Ruqqus::admin_clear_cache() {
 }
 
 /**
-Updates token if expired.
+Generates a new token with OAuth. Token is returned as a std::string.
 
 @param client_id
 @param client_secret
