@@ -1,16 +1,27 @@
+// std
 #include <iostream>
 #include <string>
-#include <chrono>
+#include <sstream>
+
+// curlpp
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <curlpp/Exception.hpp>
 #include <curlpp/Types.hpp>
+
+// json
 #include <jsoncpp/json/json.h>
 
+// ruqquscpp
 #include "http.hpp"
 #include "ruqqus.hpp"
 
+/**
+Converts JSON value to RuqqusGuild object
+
+@param val Json value
+*/
 RuqqusGuild Ruqqus::JSON_to_guild(Json::Value val) {
 	RuqqusGuild guild;
 	guild.banner_url = val["banner_url"].asString();
@@ -32,6 +43,11 @@ RuqqusGuild Ruqqus::JSON_to_guild(Json::Value val) {
 	return guild;
 }
 
+/**
+Converts JSON value to RuqqusUser object
+
+@param val Json value
+*/
 RuqqusUser Ruqqus::JSON_to_user(Json::Value val) {
 	RuqqusUser user;
 	user.banner_url = val["banner_url"].asString();
@@ -65,6 +81,11 @@ RuqqusUser Ruqqus::JSON_to_user(Json::Value val) {
 	return user;
 }
 
+/**
+Converts JSON to RuqqusPost object
+
+@param val Json value
+*/
 RuqqusPost Ruqqus::JSON_to_post(Json::Value val) {
 	RuqqusPost post;
 	post.author = val["author"].asString();
@@ -99,6 +120,11 @@ RuqqusPost Ruqqus::JSON_to_post(Json::Value val) {
 	return post;
 }
 
+/**
+Converts comment to RuqqusComment
+
+@param val Json value
+*/
 RuqqusComment Ruqqus::JSON_to_comment(Json::Value val) {
 	RuqqusComment comment;
 	comment.author = val["author"].asString();
@@ -282,6 +308,32 @@ bool Ruqqus::guild_leave(std::string guildname) {
 }
 
 /**
+Gets listing of posts in guildname
+
+@param guildname The name of the guild to get listing from
+*/
+std::vector<RuqqusPost> Ruqqus::guild_listing(std::string guildname) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_post(server+"/api/v1/guild/"+guildname+"/listing");
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	std::vector<RuqqusPost> ret;
+	for(Json::Value::ArrayIndex i = 0; i != val["api"].size(); i++) {
+		RuqqusPost post;
+		post = JSON_to_post(val["api"][i]);
+		ret.push_back(post);
+	}
+	return ret;
+}
+
+/**
 Checks if username is available
 
 @param username Name of the user to be checked
@@ -324,9 +376,41 @@ void Ruqqus::user_unfollow(std::string username) {
 }
 
 /**
+Exiles a user from a board
+
+@param username The username of the user
+*/
+void Ruqqus::user_exile(std::string username, std::string bid) {
+	Json::Value val;
+	Json::Reader read;
+	bool r;
+	std::string server_response;
+	
+	server_response = http_post(server+"/mod/exile/"+bid,"username="+username);
+
+	if(!server_response.empty()) {
+		r = read.parse(server_response,val,false);
+		if(!r) {
+			throw std::runtime_error("Cannot parse JSON value");
+		}
+
+		// Server only returns a JSON of error when there is an error
+		// if it does not return an error, we can safely assume that
+		// it was a sucess
+		std::string err = val["error"].asString();
+		if(!err.empty()) {
+			throw std::runtime_error("Server returned error "+err);
+		}
+	}
+
+	return;
+}
+
+/**
 Submits a post
 */
 bool Ruqqus::post_submit(std::string url, std::string title, std::string body, std::string guildname) {
+	// Almost all parts are needed except for URL
 	http_post(server+"/api/v1/submit","url="+url+"&title="+title+"&body="+body+"&board="+guildname);
 	return true;
 }
@@ -343,6 +427,8 @@ std::string Ruqqus::post_get_title(std::string postid) {
 	bool r;
 	std::string server_response;
 	
+	// Do not confuse by the name, submit actually obtains the
+	// post title via the id
 	server_response = http_get(server+"/api/submit/title?url="+postid);
 	
 	r = read.parse(server_response,val,false);
@@ -364,7 +450,7 @@ Deletes a post
 @param postid The Id of the post
 */
 void Ruqqus::post_delete(std::string postid) {
-	http_post(server+"/delete_post/"+postid);
+	http_post_http_response(server+"/delete_post/"+postid);
 	return;
 }
 
@@ -374,7 +460,7 @@ Toggles a post to NSFW
 @param postid The Id of the post
 */
 void Ruqqus::post_toggle_nsfw(std::string postid) {
-	http_post(server+"/api/toggle_post_nsfw/"+postid);
+	http_post_http_response(server+"/api/toggle_post_nsfw/"+postid);
 	return;
 }
 
@@ -384,7 +470,7 @@ Toggles a post to NSFL
 @param postid The Id of the post
 */
 void Ruqqus::post_toggle_nsfl(std::string postid) {
-	http_post(server+"/api/toggle_post_nsfl/"+postid);
+	http_post_http_response(server+"/api/toggle_post_nsfl/"+postid);
 	return;
 }
 
@@ -394,7 +480,21 @@ Votes for a post
 @param postid The Id of the post
 */
 void Ruqqus::post_vote(std::string postid, signed char v) {
-	http_post(server+"/api/vote/post/"+postid+"/"+std::to_string(v));
+	http_post_http_response(server+"/api/vote/post/"+postid+"/"+std::to_string(v));
+	return;
+}
+
+/**
+Flags/reports a post
+
+@param postid The Id of the post
+*/
+void Ruqqus::post_flag(std::string postid, std::string report_type) {
+	// There are two types of flagging, admin wich does "flagging"
+	// and "guild", wich reports the post to the guildmaster
+	//
+	// If you are making a moderation bot, you should use "guild" type
+	http_post_http_response(server+"/api/flag/post/"+postid,"report_type="+report_type);
 	return;
 }
 
@@ -430,13 +530,30 @@ void Ruqqus::comment_vote(std::string cid, signed char v) {
 }
 
 /**
+Flags a comment
+
+@param cid The Id of the comment
+*/
+void Ruqqus::comment_flag(std::string cid) {
+	http_post_http_response(server+"/api/flag/comment/"+cid);
+	return;
+}
+
+/*
+Administrative functions
+
+These functions have not been tested, but with the correct admin levels
+it should work theorically.
+*/
+
+/**
 Bans a user. Requires 3 admin privileges
 
 @param uid The Id of the user
 @param reason Reason for ban
 */
-void Ruqqus::admin_ban_user(std::string uid, std::string reason) {
-	http_post(server+"/api/ban_user/"+uid+"?reason="+reason);
+void Ruqqus::admin_ban_user(std::string uid, int days, std::string reason, std::string message) {
+	http_post(server+"/api/ban_user/"+uid,"reason="+reason+"&message="+message+"&days="+std::to_string(days));
 	return;
 }
 
@@ -445,8 +562,16 @@ Unbans a user. Requires 3 admin privileges
 
 @param uid The Id of the user
 */
-void Ruqqus::admin_unban_user(std::string uid) {
-	http_post(server+"/api/unban_user/"+uid);
+void Ruqqus::admin_unban_user(std::string uid, bool unban_alts) {
+	// Faster than std::boolalpha :P
+	std::string alt;
+	if(unban_alts) {
+		alt = "true";
+	} else {
+		alt = "false";
+	}
+
+	http_post(server+"/api/unban_user/"+uid,"alts="+alt);
 	return;
 }
 
@@ -457,7 +582,7 @@ Bans a post. Requires 3 admin privileges
 @param reason Reason for ban
 */
 void Ruqqus::admin_ban_post(std::string pid, std::string reason) {
-	http_post(server+"/api/ban_post/"+pid+"?reason="+reason);
+	http_post(server+"/api/ban_post/"+pid,"?reason="+reason);
 	return;
 }
 
@@ -537,7 +662,7 @@ Obatains all user status. Requires 2 admin privileges
 
 @param days N. of days of data to be received
 */
-Json::Value Ruqqus::admin_user_stat(uintmax_t days) {
+Json::Value Ruqqus::admin_user_stat(int days) {
 	Json::Value val;
 	Json::Reader read;
 	bool r;
@@ -581,14 +706,14 @@ void Ruqqus::admin_clear_cache() {
 	
 	std::string str = val["message"].asString();
 	if(str.empty()) {
-		throw std::runtime_error("Server trhrew invalid message");
+		throw std::runtime_error("Server trhrew invalid message (empty)");
 	}
 	
 	return;
 }
 
 /**
-Updates token if expired.
+Generates a new token with OAuth. Token is returned as a std::string.
 
 @param client_id
 @param client_secret
@@ -609,8 +734,10 @@ std::string Ruqqus::oauth_update_token(void) {
 	
 	std::string token = val["access_token"].asString();
 	if(token.empty()) {
-		throw std::runtime_error("Server trhrew invalid message");
+		throw std::runtime_error("Server threw invalid message");
 	}
+
+	http_set_oauth_token(token);
 	
 	return token;
 }
@@ -625,8 +752,6 @@ Ruqqus::Ruqqus(std::string servername) {
 	curlpp::Cleanup raii_cleanup;
 	
 	server = servername;
-	
-	token_renew_chrono = std::chrono::steady_clock::now();
 }
 
 

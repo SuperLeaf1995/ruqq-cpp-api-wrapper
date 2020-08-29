@@ -6,7 +6,7 @@
 
 class RuqqusBadges {
     public:
-        uintmax_t created_utc;
+        int created_utc;
         std::string name;
         std::string text;
         std::string url;
@@ -18,14 +18,14 @@ class RuqqusUser {
         std::string banner_url;
         std::string bio;
         std::string bio_html;
-        uintmax_t comment_count;
-        uintmax_t comment_rep;
-        uintmax_t created_utc;
+        int comment_count;
+        int comment_rep;
+        int created_utc;
         std::string id;
         bool is_banned;
         std::string permalink;
-        uintmax_t post_count;
-        uintmax_t post_rep;
+        int post_count;
+        int post_rep;
         std::string profile_url;
         RuqqusTitle title;
         std::string username;

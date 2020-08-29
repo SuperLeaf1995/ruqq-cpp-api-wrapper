@@ -5,7 +5,7 @@ class RuqqusGuild {
     public:
         std::string banner_url;
         std::string color;
-        uintmax_t created_utc;
+        int created_utc;
         std::string description;
         std::string description_html;
         std::string fullname;
@@ -13,12 +13,12 @@ class RuqqusGuild {
         bool is_banned;
         bool is_private;
         bool is_restricted;
-        uintmax_t mods_count;
+        int mods_count;
         std::string name;
         bool over_18;
         std::string permalink;
         std::string profile_url;
-        uintmax_t subscriber_count;
+        int subscriber_count;
 };
 
 #endif // GUILD_HPP_INCLUDED
