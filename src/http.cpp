@@ -101,7 +101,7 @@ std::string http_post_http_response(std::string url, std::string data) {
 
 	http_status = curlpp::infos::ResponseCode::get(easy_handle);
 	if(http_status > 299 || http_status < 199) {
-		throw std::runtime_error("Invalid response code "+http_status);
+		throw std::runtime_error("Invalid response code "+std::to_string(http_status));
 	}
 
 	return write_buffer;
