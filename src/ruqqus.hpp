@@ -75,6 +75,7 @@ class Ruqqus {
 		
 		// The auto-token updater, so you don't have to worry about expiring tokens ;)
 		std::string oauth_update_token(void);
+		std::string oauth_auto_update_token(void);
 
 		Ruqqus(std::string servername);
 		~Ruqqus();
