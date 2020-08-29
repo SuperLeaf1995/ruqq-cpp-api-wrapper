@@ -485,6 +485,16 @@ void Ruqqus::post_vote(std::string postid, signed char v) {
 }
 
 /**
+Flags/reposts a post
+
+@param postid The Id of the post
+*/
+void Ruqqus::post_flag(std::string postid, std::string report_type) {
+	http_post_http_response(server+"/api/flag/post/"+postid,"report_type="+report_type);
+	return;
+}
+
+/**
 Get a comment in post
 
 @param pid Id of the post
