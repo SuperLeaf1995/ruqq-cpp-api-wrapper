@@ -13,32 +13,38 @@ class Ruqqus {
 	public:
 		bool auto_token_continue;
 	
+		// internals
 		std::string server;
 		std::string token;
 		std::string client_id;
 		std::string client_secret;
 		std::string refresh_token;
 		
+		// internal functions to make life easier(TM)
 		RuqqusGuild JSON_to_guild(Json::Value val);
 		RuqqusUser JSON_to_user(Json::Value val);
 		RuqqusPost JSON_to_post(Json::Value val);
 		RuqqusComment JSON_to_comment(Json::Value val);
 		
+		// official API functions
 		RuqqusGuild guild_info(std::string guildname);
 		RuqqusUser user_info(std::string username);
 		RuqqusPost post_info(std::string post);
 		RuqqusComment comment_info(std::string comment);
 
+		// guild
 		bool guild_available(std::string guildname);
 		bool guild_join(std::string guildname);
 		bool guild_leave(std::string guildname);
 		std::vector<RuqqusPost> guild_listing(std::string guildname);
 		
+		// user
 		bool user_available(std::string username);
 		void user_follow(std::string username);
 		void user_unfollow(std::string username);
 		void user_exile(std::string username, std::string bid);
 		
+		// post
 		bool post_submit(std::string url, std::string title, std::string body, std::string guildname);
 		std::string post_get_title(std::string postid);
 		void post_toggle_nsfw(std::string postid);
@@ -47,9 +53,12 @@ class Ruqqus {
 		void post_vote(std::string postid, signed char v);
 		void post_flag(std::string postid, std::string report_type);
 		
+		// comment
 		RuqqusComment comment_get_in_post(std::string pid, std::string cid);
 		void comment_vote(std::string cid, signed char v);
+		void comment_flag(std::string cid);
 		
+		// administrative functions
 		void admin_ban_user(std::string uid, int days, std::string reason, std::string message);
 		void admin_unban_user(std::string uid, bool unban_alts = true);
 		void admin_ban_post(std::string pid, std::string reason);
@@ -64,6 +73,7 @@ class Ruqqus {
 		void admin_csam_nuke(std::string postid);
 		void admin_clear_cache();
 		
+		// The auto-token updater, so you don't have to worry about expiring tokens ;)
 		std::string oauth_update_token(void);
 
 		Ruqqus(std::string servername);

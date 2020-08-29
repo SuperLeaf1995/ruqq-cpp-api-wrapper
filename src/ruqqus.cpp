@@ -485,11 +485,15 @@ void Ruqqus::post_vote(std::string postid, signed char v) {
 }
 
 /**
-Flags/reposts a post
+Flags/reports a post
 
 @param postid The Id of the post
 */
 void Ruqqus::post_flag(std::string postid, std::string report_type) {
+	// There are two types of flagging, admin wich does "flagging"
+	// and "guild", wich reports the post to the guildmaster
+	//
+	// If you are making a moderation bot, you should use "guild" type
 	http_post_http_response(server+"/api/flag/post/"+postid,"report_type="+report_type);
 	return;
 }
@@ -515,13 +519,6 @@ RuqqusComment Ruqqus::comment_get_in_post(std::string pid, std::string cid) {
 	return JSON_to_comment(val);
 }
 
-/*
-Administrative functions
-
-These functions have not been tested, but with the correct admin levels
-it should work theorically.
-*/
-
 /**
 Votes for a comment
 
@@ -531,6 +528,23 @@ void Ruqqus::comment_vote(std::string cid, signed char v) {
 	http_post(server+"/api/vote/comment/"+cid+"/"+std::to_string(v));
 	return;
 }
+
+/**
+Flags a comment
+
+@param cid The Id of the comment
+*/
+void Ruqqus::comment_flag(std::string cid) {
+	http_post_http_response(server+"/api/flag/comment/"+cid);
+	return;
+}
+
+/*
+Administrative functions
+
+These functions have not been tested, but with the correct admin levels
+it should work theorically.
+*/
 
 /**
 Bans a user. Requires 3 admin privileges
