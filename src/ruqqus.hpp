@@ -1,6 +1,9 @@
 #ifndef RUQQUS_HPP_INCLUDED
 #define RUQQUS_HPP_INCLUDED
 
+#include <string>
+#include <vector>
+
 #include "guild.hpp"
 #include "user.hpp"
 #include "post.hpp"
@@ -29,10 +32,12 @@ class Ruqqus {
 		bool guild_available(std::string guildname);
 		bool guild_join(std::string guildname);
 		bool guild_leave(std::string guildname);
+		std::vector<RuqqusPost> guild_listing(std::string guildname)
 		
 		bool user_available(std::string username);
 		void user_follow(std::string username);
 		void user_unfollow(std::string username);
+		void user_exile(std::string username, std::string bid);
 		
 		bool post_submit(std::string url, std::string title, std::string body, std::string guildname);
 		std::string post_get_title(std::string postid);
@@ -44,7 +49,7 @@ class Ruqqus {
 		RuqqusComment comment_get_in_post(std::string pid, std::string cid);
 		void comment_vote(std::string cid, signed char v);
 		
-		void admin_ban_user(std::string uid, std::string reason);
+		void Ruqqus::admin_ban_user(std::string uid, int days, std::string reason, std::string message);
 		void admin_unban_user(std::string uid);
 		void admin_ban_post(std::string pid, std::string reason);
 		void admin_unban_post(std::string pid);
@@ -54,7 +59,7 @@ class Ruqqus {
 		void admin_ban_guild(std::string bid, std::string reason);
 		void admin_unban_guild(std::string bid);
 		void admin_mod_self(std::string bid);
-		Json::Value admin_user_stat(uintmax_t days);
+		Json::Value admin_user_stat(int days);
 		void admin_csam_nuke(std::string postid);
 		void admin_clear_cache();
 		

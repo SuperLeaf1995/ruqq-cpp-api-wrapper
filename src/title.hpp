@@ -4,8 +4,8 @@
 class RuqqusTitle {
 	public:
 		std::string color;
-		uintmax_t id;
-		uintmax_t kind;
+		int id;
+		int kind;
 		std::string text;
 };
 
