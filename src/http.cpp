@@ -12,10 +12,16 @@
 // ruqquscpp
 #include "http.hpp"
 
-std::string oauth_token;
+static std::string oauth_token;
+static std::string cookie;
 
 bool http_set_oauth_token(std::string token) {
 	oauth_token = token;
+	return true;
+}
+
+bool http_set_cookie(std::string cookieval) {
+	cookieval = cookie;
 	return true;
 }
 
@@ -43,6 +49,9 @@ std::list<std::string> http_header_create() {
 	header.push_back("User-Agent: ruqqusCpp/3.5");
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
+	}
+	if(!cookie.empty()) {
+		header.push_back("Set-Cookie: session_ruqqus="+cookie+"; Domain=.ruqqus.com; Path=/; Secure; HttpOpnly");
 	}
 	return header;
 }

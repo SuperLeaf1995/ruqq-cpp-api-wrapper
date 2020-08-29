@@ -7,6 +7,8 @@
 #include <curlpp/Options.hpp>
 
 bool http_set_oauth_token(std::string token);
+bool http_set_cookie(std::string cookieval);
+
 size_t http_write_callback(void * ptr, size_t size, size_t nmemb);
 
 curlpp::options::WriteFunction * http_use_write_callback();
