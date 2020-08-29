@@ -1,10 +1,10 @@
-# ruqq-cpp-api-wrapper
+# ruqqus-cpp
 Fanmade API made by me for using the ruqqus api
 
 ## Example ruqqus bot
 ```cpp
-#include <rcpp/ruqqus.hpp>
-#include <rcpp/http.hpp>
+#include <ruqquscpp/ruqqus.hpp>
+#include <ruqquscpp/http.hpp>
 
 std::string server = "https://ruqqus.com";
 Ruqqus client(server);
@@ -30,3 +30,20 @@ int main(int argc, char ** argv) {
 	return 0;
 }
 ```
+
+## Installation
+
+Create the include folders
+```
+sudo mkdir -p /usr/include/ruqquscpp
+```
+
+Cd, build and move to the libs folder
+```
+cd ruqqus-cpp/src
+sh build.sh
+sudo mv obj/libruqqus.so /usr/lib
+sudo mv *.hpp /usr/include/ruqquscpp
+```
+
+You're done! :)
