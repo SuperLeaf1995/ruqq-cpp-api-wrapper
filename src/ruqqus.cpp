@@ -1,4 +1,6 @@
+#include <iostream>
 #include <string>
+#include <chrono>
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
@@ -322,6 +324,14 @@ void Ruqqus::user_unfollow(std::string username) {
 }
 
 /**
+Submits a post
+*/
+bool Ruqqus::post_submit(std::string url, std::string title, std::string body, std::string guildname) {
+	http_post(server+"/api/v1/submit","url="+url+"&title="+title+"&body="+body+"&board="+guildname);
+	return true;
+}
+
+/**
 Gets a post title
 
 @param postid The Id of the post
@@ -387,20 +397,6 @@ void Ruqqus::post_vote(std::string postid, signed char v) {
 	http_post(server+"/api/vote/post/"+postid+"/"+std::to_string(v));
 	return;
 }
-
-/*
-POST /api/comment (ratelimit 6/min, auth not required??) 
-POST /api/v1/delete/comment/<cid> (auth required, needs "delete" scope)
-GET /api/vi/embed/comment/<cid> (yes, "vi", opened a pr)
-GET /api/vi/embed/post/<pid>/comment/<cid> (also "vi")
-POST /api/flag/post/<pid>
-POST /api/flag/comment/<cid>
-GET /api/v1/front/listing
-GET /api/v1/all/listing
-GET /api/submit/title (ratelimit 3/min)
-GET /api/v1/user/<username>/listing
-POST /api/agree_tos
-*/
 
 /**
 Get a comment in post
@@ -592,6 +588,34 @@ void Ruqqus::admin_clear_cache() {
 }
 
 /**
+Updates token if expired.
+
+@param client_id
+@param client_secret
+@param refresh_token
+*/
+std::string Ruqqus::oauth_update_token(void) {
+	Json::Value val;
+	Json::Reader read;
+	bool r;
+	std::string server_response;
+	
+	server_response = http_post(server+"/oauth/grant","client_id="+client_id+"&client_secret="+client_secret+"&refresh_token="+refresh_token+"&grant_type=refresh");
+	
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+	
+	std::string token = val["access_token"].asString();
+	if(token.empty()) {
+		throw std::runtime_error("Server trhrew invalid message");
+	}
+	
+	return token;
+}
+
+/**
 Ruqqus constructor
 
 @param servername The name of the server where the API should be contacted at, very useful to set it to localhost in case of tests
@@ -599,8 +623,10 @@ Ruqqus constructor
 Ruqqus::Ruqqus(std::string servername) {
 	curlpp::initialize();
 	curlpp::Cleanup raii_cleanup;
-
+	
 	server = servername;
+	
+	token_renew_chrono = std::chrono::steady_clock::now();
 }
 
 
@@ -608,5 +634,6 @@ Ruqqus::Ruqqus(std::string servername) {
 Ruqqus deconstructor. Dies.
 */
 Ruqqus::~Ruqqus() {
+	auto_token_continue = false;
 	curlpp::terminate();
 }
