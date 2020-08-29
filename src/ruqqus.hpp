@@ -32,7 +32,7 @@ class Ruqqus {
 		bool guild_available(std::string guildname);
 		bool guild_join(std::string guildname);
 		bool guild_leave(std::string guildname);
-		std::vector<RuqqusPost> guild_listing(std::string guildname)
+		std::vector<RuqqusPost> guild_listing(std::string guildname);
 		
 		bool user_available(std::string username);
 		void user_follow(std::string username);
@@ -49,8 +49,8 @@ class Ruqqus {
 		RuqqusComment comment_get_in_post(std::string pid, std::string cid);
 		void comment_vote(std::string cid, signed char v);
 		
-		void Ruqqus::admin_ban_user(std::string uid, int days, std::string reason, std::string message);
-		void admin_unban_user(std::string uid);
+		void admin_ban_user(std::string uid, int days, std::string reason, std::string message);
+		void admin_unban_user(std::string uid, bool unban_alts = true);
 		void admin_ban_post(std::string pid, std::string reason);
 		void admin_unban_post(std::string pid);
 		void admin_sticky_post(std::string pid);

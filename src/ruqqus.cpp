@@ -1,13 +1,19 @@
+// std
 #include <iostream>
 #include <string>
-#include <chrono>
+#include <sstream>
+
+// curlpp
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <curlpp/Exception.hpp>
 #include <curlpp/Types.hpp>
+
+// json
 #include <jsoncpp/json/json.h>
 
+// ruqquscpp
 #include "http.hpp"
 #include "ruqqus.hpp"
 
@@ -533,7 +539,14 @@ Unbans a user. Requires 3 admin privileges
 @param uid The Id of the user
 */
 void Ruqqus::admin_unban_user(std::string uid, bool unban_alts) {
-	stringstream alt = std::boolalpha << unban_alts;
+	// Faster than std::boolalpha :P
+	std::string alt;
+	if(unban_alts) {
+		alt = "true";
+	} else {
+		alt = "false";
+	}
+
 	http_post(server+"/api/unban_user/"+uid,"alts="+alt);
 	return;
 }
@@ -697,7 +710,7 @@ std::string Ruqqus::oauth_update_token(void) {
 	
 	std::string token = val["access_token"].asString();
 	if(token.empty()) {
-		throw std::runtime_error("Server trhrew invalid message");
+		throw std::runtime_error("Server threw invalid message");
 	}
 
 	http_set_oauth_token(token);
@@ -715,8 +728,6 @@ Ruqqus::Ruqqus(std::string servername) {
 	curlpp::Cleanup raii_cleanup;
 	
 	server = servername;
-	
-	token_renew_chrono = std::chrono::steady_clock::now();
 }
 
 

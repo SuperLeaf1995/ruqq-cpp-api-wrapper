@@ -1,11 +1,15 @@
+// curlpp
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <curlpp/Exception.hpp>
 #include <curlpp/Types.hpp>
 #include <curlpp/Infos.hpp>
+
+// multithreading
 #include <mutex>
 
+// ruqquscpp
 #include "http.hpp"
 
 std::string oauth_token;
@@ -99,7 +103,7 @@ std::string http_post_http_response(std::string url, std::string data) {
 	}
 	easy_handle->perform();
 
-	http_status = curlpp::infos::ResponseCode::get(easy_handle);
+	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	if(http_status > 299 || http_status < 199) {
 		throw std::runtime_error("Invalid response code "+std::to_string(http_status));
 	}
