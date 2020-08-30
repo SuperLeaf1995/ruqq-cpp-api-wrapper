@@ -39,33 +39,37 @@ int main(void) {
 	
 	start = std::chrono::steady_clock::now();
 	for(;;) {
-		// Get the HTTP response of XKCD via our API ;)
-		server_response = http_get("https://xkcd.com/info.0.json");
-		r = read.parse(server_response,val,false);
-		if(!r) {
-			throw std::runtime_error("Cannot parse JSON value");
-		}
-		
-		// Obtain data from the JSON object
-		std::string img = val["img"].asString();
-		std::string name = val["name"].asString();
-		
-		// Check seconds passed (wait 5 seconds before trying to post)
+		// Check seconds passed (wait 1 minute before trying to post)
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		long int secs = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
-		if( secs > 5) {
+		
+		if(secs > 4) {
+			std::cout << "5" << std::endl;
+			
+			// Get the HTTP response of XKCD via our API ;)
+			server_response = http_get("https://xkcd.com/info.0.json");
+			r = read.parse(server_response,val,false);
+			if(!r) {
+				throw std::runtime_error("Cannot parse JSON value");
+			}
+		
+			// Obtain data from the JSON object
+			std::string img = val["img"].asString();
+			std::string name = val["name"].asString();
+			
+			if(img != oldImg) {
+				std::string url,title,body,guild;
+				
+				url = img;
+				title = "[XKCD] - "+name;
+				body = "bot-posted xkcd comic";
+				guild = "general";
+				
+				client.post_submit(url,title,body,guild);
+				std::cout << "posted xkcd "+img << std::endl;
+				oldImg = img;
+			}
 			start = std::chrono::steady_clock::now();
-			
-			std::string url,title,body,guild;
-			
-			url = img;
-			title = "[XKCD] - "+name;
-			body = "bot-posted xkcd comic";
-			guild = "general";
-			
-			//client.post_submit(url,title,body,guild);
-			std::cout << "posted xkcd "+img << std::endl;
-			oldImg = img;
 		}
 		
 		// Auto update our token
