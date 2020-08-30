@@ -1,5 +1,0 @@
-libruqquscpp-dev (0.3.6) stable; urgency=low
-	* Initial commit for packaging for ruqquscpp
-		- Added main API endpoints of ruqqus
-
--- Jesus Antonio <jesusantonio30122016@gmail.com> Sun, 30 Aug 2020 15:58:30 +0100
