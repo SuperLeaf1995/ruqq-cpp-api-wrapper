@@ -234,6 +234,35 @@ RuqqusComment Ruqqus::comment_info(std::string commentid) {
 }
 
 /**
+Does a comment
+
+@param pid Post ID
+*/
+void Ruqqus::comment_submit(std::string pid, std::string body) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+	std::map<std::string,std::string> form;
+
+	form.insert(std::pair<std::string,std::string>("parent_fullname","t2_"+pid));
+	form.insert(std::pair<std::string,std::string>("submission",pid));
+	form.insert(std::pair<std::string,std::string>("body",body));
+
+	server_response = http_form_post(server+"/api/v1/comment",form);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	std::string err = val["error"].asString();
+	if(!err.empty()) {
+		throw std::runtime_error("Server returned error "+err);
+	}
+	return;
+}
+
+/**
 Checks if guildname is available
 
 @param guildname Name of the guild to be checked

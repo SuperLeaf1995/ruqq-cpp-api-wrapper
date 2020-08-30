@@ -89,6 +89,37 @@ std::string http_post(std::string url, std::string data) {
 	return write_buffer;
 }
 
+std::string http_form_post(std::string url, std::map<std::string,std::string> data) {
+	// Write function
+	write_buffer = "";
+	curlpp::Easy * easy_handle = new curlpp::Easy();
+	curlpp::Forms form;
+	
+	// Perform request
+	std::list<std::string> header = http_header_create();
+	//header.push_back("Content-Type: application/x-www-form-urlencoded");
+
+	easy_handle->setOpt(http_use_write_callback());
+	easy_handle->setOpt(new curlpp::options::Url(url));
+	easy_handle->setOpt(new curlpp::options::HttpHeader(header));
+
+	// Iterate over form data
+	std::map<std::string,std::string>::iterator i = data.begin();
+	while(i != data.end()) {
+		std::string k = i->first;
+		std::string v = i->second;
+		form.push_back(new curlpp::FormParts::Content(k,v));
+
+		std::cout << k << ":" << v << std::endl;
+
+		i++;
+	}
+
+	easy_handle->setOpt(new curlpp::options::HttpPost(form));
+	easy_handle->perform();
+	return write_buffer;
+}
+
 std::string http_put(std::string url, std::string data) {
 	// Write function
 	write_buffer = "";

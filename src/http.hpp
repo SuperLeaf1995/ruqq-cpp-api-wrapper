@@ -16,6 +16,7 @@ std::list<std::string> http_header_create();
 
 std::string http_get(std::string url);
 std::string http_post(std::string url, std::string data = "");
+std::string http_form_post(std::string url, std::map<std::string,std::string> data);
 std::string http_put(std::string url, std::string data = "");
 std::string http_post_http_response(std::string url, std::string data = "");
 

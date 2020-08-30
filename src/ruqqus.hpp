@@ -57,6 +57,7 @@ class Ruqqus {
 		RuqqusComment comment_get_in_post(std::string pid, std::string cid);
 		void comment_vote(std::string cid, signed char v);
 		void comment_flag(std::string cid);
+		void comment_submit(std::string pid, std::string body);
 		
 		// administrative functions
 		void admin_ban_user(std::string uid, int days, std::string reason, std::string message);
