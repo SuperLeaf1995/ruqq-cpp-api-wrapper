@@ -55,7 +55,7 @@ int main(void) {
 		
 			// Obtain data from the JSON object
 			std::string img = val["img"].asString();
-			std::string name = val["name"].asString();
+			std::string name = val["safe_title"].asString();
 			
 			if(img != oldImg) {
 				std::string url,title,body,guild;
