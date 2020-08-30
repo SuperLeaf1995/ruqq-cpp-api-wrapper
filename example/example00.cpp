@@ -48,16 +48,22 @@ int main(void) {
 		
 		// Obtain data from the JSON object
 		std::string img = val["img"].asString();
-		std::string year = val["year"].asString();
-		std::string month = val["month"].asString();
-		std::string day = val["day"].asString();
-		std::string alt = val["alt"].asString();
+		std::string name = val["name"].asString();
 		
 		// Check seconds passed (wait 5 seconds before trying to post)
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		long int secs = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
-		if(img != oldImg && secs > 5) {
-			client.post_submit(img,"XKCD Comic","XKCD: "+alt+" /"+year+month+day,"bot-posted xkcd comic","general");
+		if( secs > 5) {
+			start = std::chrono::steady_clock::now();
+			
+			std::string url,title,body,guild;
+			
+			url = img;
+			title = "[XKCD] - "+name;
+			body = "bot-posted xkcd comic";
+			guild = "general";
+			
+			//client.post_submit(url,title,body,guild);
 			std::cout << "posted xkcd "+img << std::endl;
 			oldImg = img;
 		}

@@ -154,7 +154,18 @@ std::string http_post_http_response(std::string url, std::string data) {
 
 	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	if(http_status > 299 || http_status < 199) {
-		throw std::runtime_error("Invalid response code "+std::to_string(http_status));
+		switch(http_status) {
+			case 503:
+				throw std::runtime_error("Internal server error");
+			case 500:
+				throw std::runtime_error("");
+			case 404:
+				throw std::runtime_error("Document not found");
+			case 401:
+				throw std::runtime_error("Auth token expired or invalid");
+			default:
+				throw std::runtime_error("Invalid response code "+std::to_string(http_status));
+		}
 	}
 
 	return write_buffer;

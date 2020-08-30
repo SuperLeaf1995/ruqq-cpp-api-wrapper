@@ -268,7 +268,7 @@ Does a reply to a comment in a post
 @param pid Post ID
 @param cid Comment ID
 */
-void Ruqqus::comment_submit(std::string pid, std::string cid, std::string body) {
+void Ruqqus::comment_reply(std::string pid, std::string cid, std::string body) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
@@ -470,8 +470,15 @@ void Ruqqus::user_exile(std::string username, std::string bid) {
 Submits a post
 */
 bool Ruqqus::post_submit(std::string url, std::string title, std::string body, std::string guildname) {
+	std::map<std::string,std::string> form;
+
+	form.insert(std::pair<std::string,std::string>("url",url));
+	form.insert(std::pair<std::string,std::string>("title",title));
+	form.insert(std::pair<std::string,std::string>("body",body));
+	form.insert(std::pair<std::string,std::string>("board",guildname));
+	
 	// Almost all parts are needed except for URL
-	http_post(server+"/api/v1/submit","url="+url+"&title="+title+"&body="+body+"&board="+guildname);
+	http_form_post(server+"/api/v1/submit",form);
 	return true;
 }
 
