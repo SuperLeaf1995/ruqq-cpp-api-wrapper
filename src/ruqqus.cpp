@@ -552,6 +552,25 @@ void Ruqqus::post_vote(std::string postid, signed char v) {
 }
 
 /**
+Gets newest post
+*/
+RuqqusPost Ruqqus::post_get_newest(void) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_post(server+"/api/v1/all/listing?sort=new");
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	RuqqusPost post = JSON_to_post(val["data"][-0]);
+	return post;
+}
+
+/**
 Gets newests posts
 */
 std::vector<RuqqusPost> Ruqqus::post_get_new(void) {

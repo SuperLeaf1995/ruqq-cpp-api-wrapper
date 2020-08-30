@@ -47,6 +47,7 @@ std::list<std::string> http_header_create() {
 	// HTTP Header
 	std::list<std::string> header;
 	header.push_back("User-Agent: ruqqusCpp/3.5");
+	header.push_back("X-Poster-Type: bot");
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
 	}

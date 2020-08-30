@@ -52,6 +52,7 @@ class Ruqqus {
 		void post_toggle_nsfl(std::string postid);
 		void post_vote(std::string postid, signed char v);
 		void post_flag(std::string postid, std::string report_type);
+		RuqqusPost post_get_newest(void);
 		std::vector<RuqqusPost> post_get_new(void);
 		std::vector<RuqqusPost> post_get_hot(void);
 		
