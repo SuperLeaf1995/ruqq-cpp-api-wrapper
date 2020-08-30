@@ -158,7 +158,9 @@ std::string http_post_http_response(std::string url, std::string data) {
 			case 503:
 				throw std::runtime_error("Internal server error");
 			case 500:
-				throw std::runtime_error("");
+				throw std::runtime_error("S");
+			case 405:
+				throw std::runtime_error("Method not allowed");
 			case 404:
 				throw std::runtime_error("Document not found");
 			case 401:

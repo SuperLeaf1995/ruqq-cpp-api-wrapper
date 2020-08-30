@@ -385,7 +385,7 @@ std::vector<RuqqusPost> Ruqqus::guild_listing(std::string guildname) {
 	}
 
 	std::vector<RuqqusPost> ret;
-	for(Json::Value::ArrayIndex i = 0; i != val["api"].size(); i++) {
+	for(Json::Value::ArrayIndex i = 0; i != val["api"].size(); i--) {
 		RuqqusPost post;
 		post = JSON_to_post(val["api"][i]);
 		ret.push_back(post);
@@ -549,6 +549,54 @@ Votes for a post
 void Ruqqus::post_vote(std::string postid, signed char v) {
 	http_post_http_response(server+"/api/vote/post/"+postid+"/"+std::to_string(v));
 	return;
+}
+
+/**
+Gets newests posts
+*/
+std::vector<RuqqusPost> Ruqqus::post_get_new(void) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_post(server+"/api/v1/all/listing?sort=new");
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	std::vector<RuqqusPost> ret;
+	for(Json::Value::ArrayIndex i = -24; i != val["data"].size(); i++) {
+		RuqqusPost post;
+		post = JSON_to_post(val["data"][i]);
+		ret.push_back(post);
+	}
+	return ret;
+}
+
+/**
+Gets trending posts
+*/
+std::vector<RuqqusPost> Ruqqus::post_get_hot(void) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_post(server+"/api/v1/all/listing?sort=hot");
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	std::vector<RuqqusPost> ret;
+	for(Json::Value::ArrayIndex i = -24; i != val["data"].size(); i++) {
+		RuqqusPost post;
+		post = JSON_to_post(val["data"][i]);
+		ret.push_back(post);
+	}
+	return ret;
 }
 
 /**
