@@ -33,17 +33,11 @@ int main(int argc, char ** argv) {
 
 ## Installation
 
-Create the include folders
 ```
-sudo mkdir -p /usr/include/ruqquscpp
-```
-
-Cd, build and move to the libs folder
-```
-cd ruqqus-cpp/src
-sh build.sh
-sudo mv obj/libruqqus.so /usr/lib
-sudo mv *.hpp /usr/include/ruqquscpp
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+sudo make install
 ```
 
 You're done! :)
