@@ -10,17 +10,12 @@
 #include <ruqquscpp/http.hpp>
 #include <ruqquscpp/log.hpp>
 #include <ruqquscpp/ruqqus.hpp>
-#include "tapp.hpp"
 
 std::string client_id = "yourClientId";
 std::string client_secret = "clientSecret";
 std::string refresh_token = "refreshToken";
-
 std::string server = "https://ruqqus.com";
 Ruqqus client(server);
-
-std::chrono::steady_clock::time_point start;
-std::chrono::steady_clock::time_point end;
 
 int main(void) {
 	int repostn = 0;

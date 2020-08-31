@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <chrono>
+#include <regex>
 
 // curlpp
 #include <curlpp/cURLpp.hpp>

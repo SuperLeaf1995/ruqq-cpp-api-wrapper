@@ -1,0 +1,99 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '--save',
+1 verbose cli   'ruqqus-api' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData ruqqus-api
+8 silly fetchNamedPackageData ruqqus-api
+9 silly mapToRegistry name ruqqus-api
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/ruqqus-api
+13 verbose request uri https://registry.npmjs.org/ruqqus-api
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 7:03:02 PM
+16 verbose request id 5c4d647c580efeee
+17 verbose etag W/"3b5b27bdd3764a714b83dcfd557f42a1"
+18 verbose lastModified Fri, 28 Aug 2020 08:31:31 GMT
+19 http request GET https://registry.npmjs.org/ruqqus-api
+20 http 304 https://registry.npmjs.org/ruqqus-api
+21 verbose headers { date: 'Sun, 30 Aug 2020 23:03:02 GMT',
+21 verbose headers   connection: 'keep-alive',
+21 verbose headers   'set-cookie':
+21 verbose headers    [ '__cfduid=ded794862a851bd012e159b7662ad22041598828582; expires=Tue, 29-Sep-20 23:03:02 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+21 verbose headers   'cf-ray': '5cb224919bf37f3c-QRO',
+21 verbose headers   age: '74',
+21 verbose headers   'cache-control': 'public, max-age=300',
+21 verbose headers   etag: '"3b5b27bdd3764a714b83dcfd557f42a1"',
+21 verbose headers   'last-modified': 'Fri, 28 Aug 2020 08:31:31 GMT',
+21 verbose headers   vary: 'Accept-Encoding',
+21 verbose headers   'cf-cache-status': 'HIT',
+21 verbose headers   'cf-request-id': '04e3352f0200007f3c18b23200000001',
+21 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+21 verbose headers   server: 'cloudflare' }
+22 silly get cb [ 304,
+22 silly get   { date: 'Sun, 30 Aug 2020 23:03:02 GMT',
+22 silly get     connection: 'keep-alive',
+22 silly get     'set-cookie':
+22 silly get      [ '__cfduid=ded794862a851bd012e159b7662ad22041598828582; expires=Tue, 29-Sep-20 23:03:02 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+22 silly get     'cf-ray': '5cb224919bf37f3c-QRO',
+22 silly get     age: '74',
+22 silly get     'cache-control': 'public, max-age=300',
+22 silly get     etag: '"3b5b27bdd3764a714b83dcfd557f42a1"',
+22 silly get     'last-modified': 'Fri, 28 Aug 2020 08:31:31 GMT',
+22 silly get     vary: 'Accept-Encoding',
+22 silly get     'cf-cache-status': 'HIT',
+22 silly get     'cf-request-id': '04e3352f0200007f3c18b23200000001',
+22 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+22 silly get     server: 'cloudflare' } ]
+23 verbose etag https://registry.npmjs.org/ruqqus-api from cache
+24 verbose get saving ruqqus-api to /home/superleaf1995/.npm/registry.npmjs.org/ruqqus-api/.cache.json
+25 silly install normalizeTree
+26 silly loadCurrentTree Finishing
+27 silly loadIdealTree Starting
+28 silly install loadIdealTree
+29 silly cloneCurrentTree Starting
+30 silly install cloneCurrentTreeToIdealTree
+31 silly cloneCurrentTree Finishing
+32 silly loadShrinkwrap Starting
+33 silly install loadShrinkwrap
+34 silly loadShrinkwrap Finishing
+35 silly loadAllDepsIntoIdealTree Starting
+36 silly install loadAllDepsIntoIdealTree
+37 verbose stack Error: Missing required argument #1
+37 verbose stack     at andLogAndFinish (/usr/share/npm/lib/fetch-package-metadata.js:31:3)
+37 verbose stack     at fetchPackageMetadata (/usr/share/npm/lib/fetch-package-metadata.js:51:22)
+37 verbose stack     at resolveWithNewModule (/usr/share/npm/lib/install/deps.js:456:12)
+37 verbose stack     at /usr/share/npm/lib/install/deps.js:190:5
+37 verbose stack     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:35
+37 verbose stack     at Array.forEach (<anonymous>)
+37 verbose stack     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:11
+37 verbose stack     at Array.forEach (<anonymous>)
+37 verbose stack     at asyncMap (/usr/share/npm/node_modules/slide/lib/async-map.js:51:8)
+37 verbose stack     at exports.loadRequestedDeps (/usr/share/npm/lib/install/deps.js:188:3)
+38 verbose cwd /home/superleaf1995/src/ruqqus-cpp
+39 error Linux 5.4.0-42-generic
+40 error argv "/usr/bin/node" "/usr/bin/npm" "install" "--save" "ruqqus-api"
+41 error node v8.10.0
+42 error npm  v3.5.2
+43 error code EMISSINGARG
+44 error typeerror Error: Missing required argument #1
+44 error typeerror     at andLogAndFinish (/usr/share/npm/lib/fetch-package-metadata.js:31:3)
+44 error typeerror     at fetchPackageMetadata (/usr/share/npm/lib/fetch-package-metadata.js:51:22)
+44 error typeerror     at resolveWithNewModule (/usr/share/npm/lib/install/deps.js:456:12)
+44 error typeerror     at /usr/share/npm/lib/install/deps.js:190:5
+44 error typeerror     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:35
+44 error typeerror     at Array.forEach (<anonymous>)
+44 error typeerror     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:11
+44 error typeerror     at Array.forEach (<anonymous>)
+44 error typeerror     at asyncMap (/usr/share/npm/node_modules/slide/lib/async-map.js:51:8)
+44 error typeerror     at exports.loadRequestedDeps (/usr/share/npm/lib/install/deps.js:188:3)
+45 error typeerror This is an error with npm itself. Please report this error at:
+45 error typeerror     <http://github.com/npm/npm/issues>
+46 verbose exit [ 1, true ]
