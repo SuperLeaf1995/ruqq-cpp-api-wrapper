@@ -205,7 +205,7 @@ RuqqusPost Ruqqus::post_info(std::string postid) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/pid/"+postid);
+	server_response = http_get(server+"/api/v1/post/"+postid);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -225,7 +225,7 @@ RuqqusComment Ruqqus::comment_info(std::string commentid) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/cid/"+commentid);
+	server_response = http_get(server+"/api/v1/comment/"+commentid);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -586,6 +586,7 @@ std::vector<RuqqusPost> Ruqqus::post_get_new(void) {
 		throw std::runtime_error("Cannot parse JSON value");
 	}
 
+	// The list is in negative order (from -24 to -0)
 	std::vector<RuqqusPost> ret;
 	for(Json::Value::ArrayIndex i = -24; i != val["data"].size(); i++) {
 		RuqqusPost post;
@@ -610,6 +611,7 @@ std::vector<RuqqusPost> Ruqqus::post_get_hot(void) {
 		throw std::runtime_error("Cannot parse JSON value");
 	}
 
+	// The list is in negative order (from -24 to -0)
 	std::vector<RuqqusPost> ret;
 	for(Json::Value::ArrayIndex i = -24; i != val["data"].size(); i++) {
 		RuqqusPost post;
