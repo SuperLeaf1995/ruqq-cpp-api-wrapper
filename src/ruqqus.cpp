@@ -404,9 +404,9 @@ std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname) {
 	}
 
 	std::vector<RuqqusPost> ret;
-	for(Json::Value::ArrayIndex i = 0; i != val["api"].size(); i--) {
+	for(Json::Value::ArrayIndex i = 0; i != val["data"].size(); i--) {
 		RuqqusPost post;
-		post = JSON_to_post(val["api"][i]);
+		post = JSON_to_post(val["data"][i]);
 		ret.push_back(post);
 	}
 	return ret;
@@ -430,9 +430,9 @@ std::vector<RuqqusComment> Ruqqus::guild_listing_comment(std::string guildname) 
 	}
 
 	std::vector<RuqqusComment> ret;
-	for(Json::Value::ArrayIndex i = 0; i != val["api"].size(); i--) {
+	for(Json::Value::ArrayIndex i = 0; i != val["data"].size(); i--) {
 		RuqqusComment com;
-		com = JSON_to_comment(val["api"][i]);
+		com = JSON_to_comment(val["data"][i]);
 		ret.push_back(com);
 	}
 	return ret;
