@@ -391,13 +391,13 @@ Gets listing of posts in guildname
 
 @param guildname The name of the guild to get listing from
 */
-std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname) {
+std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname, std::string sort) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
 	bool r;
 
-	server_response = http_post(server+"/api/v1/guild/"+guildname+"/listing");
+	server_response = http_post(server+"/api/v1/guild/"+guildname+"/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -468,13 +468,8 @@ std::vector<RuqqusPost> Ruqqus::user_listing_post(std::string username, std::str
 	Json::Reader read;
 	std::string server_response;
 	bool r;
-
-	std::string sorted = "";
-	if(!sort.empty()) {
-		sorted = "?sort="+sort;
-	}
 	
-	server_response = http_post(server+"/api/v1/user/"+username+"/listing"+sorted);
+	server_response = http_post(server+"/api/v1/user/"+username+"/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

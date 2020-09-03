@@ -37,7 +37,7 @@ class Ruqqus {
 		bool guild_available(std::string guildname);
 		bool guild_join(std::string guildname);
 		bool guild_leave(std::string guildname);
-		std::vector<RuqqusPost> guild_listing_post(std::string guildname);
+		std::vector<RuqqusPost> guild_listing_post(std::string guildname, std::string sort = "new");
 		std::vector<RuqqusComment> guild_listing_comment(std::string guildname);
 		
 		// user
@@ -45,7 +45,7 @@ class Ruqqus {
 		void user_follow(std::string username);
 		void user_unfollow(std::string username);
 		void user_exile(std::string username, std::string bid);
-		std::vector<RuqqusPost> user_listing_post(std::string username, std::string sort);
+		std::vector<RuqqusPost> user_listing_post(std::string username, std::string sort = "new");
 		
 		// post
 		bool post_submit(std::string url, std::string title, std::string body, std::string guildname);
