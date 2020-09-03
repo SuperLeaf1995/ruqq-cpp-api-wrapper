@@ -397,7 +397,7 @@ std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname, std::s
 	std::string server_response;
 	bool r;
 
-	server_response = http_post(server+"/api/v1/guild/"+guildname+"/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/guild/"+guildname+"/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -423,7 +423,7 @@ std::vector<RuqqusComment> Ruqqus::guild_listing_comment(std::string guildname) 
 	std::string server_response;
 	bool r;
 
-	server_response = http_post(server+"/api/v1/guild/"+guildname+"/comments");
+	server_response = http_get(server+"/api/v1/guild/"+guildname+"/comments");
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -469,7 +469,7 @@ std::vector<RuqqusPost> Ruqqus::user_listing_post(std::string username, std::str
 	std::string server_response;
 	bool r;
 	
-	server_response = http_post(server+"/api/v1/user/"+username+"/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/user/"+username+"/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -625,7 +625,7 @@ void Ruqqus::post_vote(std::string postid, signed char v) {
 /**
 Gets post listing
 */
-std::vector<RuqqusPost> Ruqqus::post_listing(std::string sort) {
+std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
@@ -635,7 +635,7 @@ std::vector<RuqqusPost> Ruqqus::post_listing(std::string sort) {
 	if(!sort.empty()) {
 		sorted = "?sort="+sort;
 	}
-	server_response = http_post(server+"/api/v1/all/listing"+sorted);
+	server_response = http_post(server+"/api/v1/all/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -647,6 +647,31 @@ std::vector<RuqqusPost> Ruqqus::post_listing(std::string sort) {
 		RuqqusPost post;
 		post = JSON_to_post(val["data"][i]);
 		ret.push_back(post);
+	}
+	return ret;
+}
+
+/**
+Gets comment listing
+*/
+std::vector<RuqqusComment> Ruqqus::all_listing_post(std::string sort) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+	
+	server_response = http_post(server+"/api/v1/all/listing?sort="+sort);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	// The list is in negative order (from -24 to -0)
+	std::vector<RuqqusComment> ret;
+	for(Json::Value::ArrayIndex i = 0; i != val["data"].size(); i++) {
+		RuqqusPost com;
+		com = JSON_to_comment(val["data"][i]);
+		ret.push_back(com);
 	}
 	return ret;
 }

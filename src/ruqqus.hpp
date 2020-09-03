@@ -32,6 +32,10 @@ class Ruqqus {
 		RuqqusUser user_info(std::string username);
 		RuqqusPost post_info(std::string post);
 		RuqqusComment comment_info(std::string comment);
+		
+		// all
+		std::vector<RuqqusPost> all_listing_post(std::string sort);
+		std::vector<RuqqusComment> all_listing_post(std::string sort);
 
 		// guild
 		bool guild_available(std::string guildname);
@@ -55,7 +59,6 @@ class Ruqqus {
 		void post_toggle_nsfl(std::string postid);
 		void post_vote(std::string postid, signed char v);
 		void post_flag(std::string postid, std::string report_type);
-		std::vector<RuqqusPost> post_listing(std::string sort);
 		
 		// comment
 		RuqqusComment comment_get_in_post(std::string pid, std::string cid);
