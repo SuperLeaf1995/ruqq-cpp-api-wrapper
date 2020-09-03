@@ -413,6 +413,32 @@ std::vector<RuqqusPost> Ruqqus::guild_listing(std::string guildname) {
 }
 
 /**
+Gets listing of comments in guild
+
+@param guildname The name of the guild to get listing from
+*/
+std::vector<RuqqusComment> Ruqqus::guild_listing(std::string guildname) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_post(server+"/api/v1/guild/"+guildname+"/comments");
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	std::vector<RuqqusComment> ret;
+	for(Json::Value::ArrayIndex i = 0; i != val["api"].size(); i--) {
+		RuqqusComment com;
+		post = JSON_to_post(val["api"][i]);
+		ret.push_back(com);
+	}
+	return ret;
+}
+
+/**
 Checks if username is available
 
 @param username Name of the user to be checked

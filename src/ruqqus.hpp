@@ -62,6 +62,7 @@ class Ruqqus {
 		void comment_flag(std::string cid);
 		void comment_submit(std::string pid, std::string body);
 		void comment_reply(std::string pid, std::string cid, std::string body);
+		std::vector<RuqqusComment> guild_listing(std::string guildname);
 		
 		// administrative functions (req. cookie)
 		void admin_ban_user(std::string uid, int days, std::string reason, std::string message);
