@@ -1,6 +1,10 @@
 //
 // example00.cpp - repost xkcd comics, IF there is a new one
 //
+// Compiling commands:
+// g++ -Wall -Wextra -lruqqus -lcurlpp -ljsoncpp -O2 example00.cpp -o example00
+// ./example00
+//
 
 #include <iostream>
 #include <string>

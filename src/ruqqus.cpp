@@ -175,6 +175,24 @@ RuqqusGuild Ruqqus::guild_info(std::string guildname) {
 }
 
 /**
+Obtains information about current user
+*/
+RuqqusUser Ruqqus::user_me(void) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	server_response = http_get(server+"/api/v1/identity");
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+	
+	return JSON_to_user(val);
+}
+
+/**
 Obtains information about username and returns a RuqqusUser class
 
 @param username The name of the user to obtain information from it
@@ -548,7 +566,8 @@ Votes for a post
 @param postid The Id of the post
 */
 void Ruqqus::post_vote(std::string postid, signed char v) {
-	http_post_http_response(server+"/api/vote/post/"+postid+"/"+std::to_string(v));
+	/* v1 dosen't uses cookies like the other one wich dosen't has the v1 */
+	http_post_http_response(server+"/api/v1/vote/post/"+postid+"/"+std::to_string(v));
 	return;
 }
 
@@ -567,7 +586,7 @@ RuqqusPost Ruqqus::post_get_newest(void) {
 		throw std::runtime_error("Cannot parse JSON value");
 	}
 
-	RuqqusPost post = JSON_to_post(val["data"][-0]);
+	RuqqusPost post = JSON_to_post(val["data"][0]);
 	return post;
 }
 
@@ -588,7 +607,7 @@ std::vector<RuqqusPost> Ruqqus::post_get_new(void) {
 
 	// The list is in negative order (from -24 to -0)
 	std::vector<RuqqusPost> ret;
-	for(Json::Value::ArrayIndex i = -24; i != val["data"].size(); i++) {
+	for(Json::Value::ArrayIndex i = 0; i != val["data"].size(); i++) {
 		RuqqusPost post;
 		post = JSON_to_post(val["data"][i]);
 		ret.push_back(post);
@@ -613,7 +632,7 @@ std::vector<RuqqusPost> Ruqqus::post_get_hot(void) {
 
 	// The list is in negative order (from -24 to -0)
 	std::vector<RuqqusPost> ret;
-	for(Json::Value::ArrayIndex i = -24; i != val["data"].size(); i++) {
+	for(Json::Value::ArrayIndex i = 0; i != val["data"].size(); i++) {
 		RuqqusPost post;
 		post = JSON_to_post(val["data"][i]);
 		ret.push_back(post);
@@ -662,7 +681,8 @@ Votes for a comment
 @param cid The Id of the comment
 */
 void Ruqqus::comment_vote(std::string cid, signed char v) {
-	http_post(server+"/api/vote/comment/"+cid+"/"+std::to_string(v));
+	/* v1 dosen't uses cookies like the other one wich dosen't has the v1 */
+	http_post(server+"/api/v1/vote/comment/"+cid+"/"+std::to_string(v));
 	return;
 }
 

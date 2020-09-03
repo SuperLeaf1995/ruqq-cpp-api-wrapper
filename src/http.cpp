@@ -14,15 +14,21 @@
 
 static std::string oauth_token;
 static std::string cookie;
+static std::string h_useragent;
 
-bool http_set_oauth_token(std::string token) {
-	oauth_token = token;
-	return true;
+void http_set_header_useragent(std::string useragent) {
+	h_useragent = useragent;
+	if(h_useragent.empty()) {
+		h_useragent = "ruqqusCpp/1.4";
+	}
 }
 
-bool http_set_cookie(std::string cookieval) {
+void http_set_oauth_token(std::string token) {
+	oauth_token = token;
+}
+
+void http_set_cookie(std::string cookieval) {
 	cookieval = cookie;
-	return true;
 }
 
 /*
@@ -46,8 +52,9 @@ curlpp::options::WriteFunction * http_use_write_callback() {
 std::list<std::string> http_header_create() {
 	// HTTP Header
 	std::list<std::string> header;
-	header.push_back("User-Agent: ruqqusCpp/3.5");
+	header.push_back("User-Agent: "+h_useragent);
 	header.push_back("X-Poster-Type: bot");
+	header.push_back("X-API-Library: ruqqus-cpp");
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
 	}
@@ -156,16 +163,26 @@ std::string http_post_http_response(std::string url, std::string data) {
 	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	if(http_status > 299 || http_status < 199) {
 		switch(http_status) {
+			case 525:
+				throw std::runtime_error("SSL Handshake Error");
+			case 505:
+				throw std::runtime_error("HTTP Version Not Supported");
 			case 503:
-				throw std::runtime_error("Internal server error");
+				throw std::runtime_error("Service Unavailable");
 			case 500:
-				throw std::runtime_error("S");
+				throw std::runtime_error("Internal Server Error");
+			case 451:
+				throw std::runtime_error("Unavailable for Legal Reasons");
+			case 418:
+				throw std::runtime_error("I'm a Teapot");
 			case 405:
-				throw std::runtime_error("Method not allowed");
+				throw std::runtime_error("Method not Allowed");
 			case 404:
-				throw std::runtime_error("Document not found");
+				throw std::runtime_error("Not found");
+			case 403:
+				throw std::runtime_error("Forbidden");
 			case 401:
-				throw std::runtime_error("Auth token expired or invalid");
+				throw std::runtime_error("Unauthorized");
 			default:
 				throw std::runtime_error("Invalid response code "+std::to_string(http_status));
 		}

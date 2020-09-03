@@ -28,6 +28,7 @@ class Ruqqus {
 		
 		// official API functions
 		RuqqusGuild guild_info(std::string guildname);
+		RuqqusUser user_me(void);
 		RuqqusUser user_info(std::string username);
 		RuqqusPost post_info(std::string post);
 		RuqqusComment comment_info(std::string comment);
@@ -63,7 +64,7 @@ class Ruqqus {
 		void comment_submit(std::string pid, std::string body);
 		void comment_reply(std::string pid, std::string cid, std::string body);
 		
-		// administrative functions
+		// administrative functions (req. cookie)
 		void admin_ban_user(std::string uid, int days, std::string reason, std::string message);
 		void admin_unban_user(std::string uid, bool unban_alts = true);
 		void admin_ban_post(std::string pid, std::string reason);
