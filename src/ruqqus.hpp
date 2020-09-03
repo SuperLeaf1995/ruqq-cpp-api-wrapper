@@ -37,13 +37,15 @@ class Ruqqus {
 		bool guild_available(std::string guildname);
 		bool guild_join(std::string guildname);
 		bool guild_leave(std::string guildname);
-		std::vector<RuqqusPost> guild_listing(std::string guildname);
+		std::vector<RuqqusPost> guild_listing_post(std::string guildname);
+		std::vector<RuqqusComment> guild_listing_comment(std::string guildname);
 		
 		// user
 		bool user_available(std::string username);
 		void user_follow(std::string username);
 		void user_unfollow(std::string username);
 		void user_exile(std::string username, std::string bid);
+		std::vector<RuqqusPost> user_listing_post(std::string username, std::string sort);
 		
 		// post
 		bool post_submit(std::string url, std::string title, std::string body, std::string guildname);
@@ -54,7 +56,6 @@ class Ruqqus {
 		void post_vote(std::string postid, signed char v);
 		void post_flag(std::string postid, std::string report_type);
 		std::vector<RuqqusPost> post_listing(std::string sort);
-		std::vector<RuqqusPost> post_listing_in_guild(std::string guildname, std::string sort);
 		
 		// comment
 		RuqqusComment comment_get_in_post(std::string pid, std::string cid);
@@ -62,7 +63,6 @@ class Ruqqus {
 		void comment_flag(std::string cid);
 		void comment_submit(std::string pid, std::string body);
 		void comment_reply(std::string pid, std::string cid, std::string body);
-		std::vector<RuqqusComment> guild_listing(std::string guildname);
 		
 		// administrative functions (req. cookie)
 		void admin_ban_user(std::string uid, int days, std::string reason, std::string message);
