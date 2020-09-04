@@ -34,8 +34,9 @@ class Ruqqus {
 		RuqqusComment comment_info(std::string comment);
 		
 		// all
-		std::vector<RuqqusPost> all_listing_post(std::string sort);
+		std::vector<RuqqusPost> all_listing_post(std::string sort = "new");
 		std::vector<RuqqusComment> all_listing_comment(void);
+		std::vector<RuqqusPost> front_listing_post(std::string sort = "new");
 
 		// guild
 		bool guild_available(std::string guildname);

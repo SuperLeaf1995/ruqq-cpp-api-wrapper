@@ -654,7 +654,7 @@ std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort) {
 /**
 Gets comment listing
 */
-std::vector<RuqqusComment> Ruqqus::all_listing_post(void) {
+std::vector<RuqqusComment> Ruqqus::all_listing_comment(void) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
@@ -672,6 +672,35 @@ std::vector<RuqqusComment> Ruqqus::all_listing_post(void) {
 		RuqqusComment com;
 		com = JSON_to_comment(val["data"][i]);
 		ret.push_back(com);
+	}
+	return ret;
+}
+
+/**
+Gets post listing
+*/
+std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+
+	std::string sorted = "";
+	if(!sort.empty()) {
+		sorted = "?sort="+sort;
+	}
+	server_response = http_post(server+"/api/v1/front/listing?sort="+sort);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+
+	// The list is in negative order (from -24 to -0)
+	std::vector<RuqqusPost> ret;
+	for(Json::Value::ArrayIndex i = 0; i != val["data"].size(); i++) {
+		RuqqusPost post;
+		post = JSON_to_post(val["data"][i]);
+		ret.push_back(post);
 	}
 	return ret;
 }
