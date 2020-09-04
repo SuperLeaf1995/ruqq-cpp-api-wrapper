@@ -35,7 +35,7 @@ class Ruqqus {
 		
 		// all
 		std::vector<RuqqusPost> all_listing_post(std::string sort);
-		std::vector<RuqqusComment> all_listing_post(std::string sort);
+		std::vector<RuqqusComment> all_listing_comment(void);
 
 		// guild
 		bool guild_available(std::string guildname);
