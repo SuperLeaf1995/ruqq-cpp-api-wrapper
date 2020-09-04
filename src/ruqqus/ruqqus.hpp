@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "guild.hpp"
 #include "user.hpp"
@@ -11,6 +12,9 @@
 
 class Ruqqus {
 	public:
+		// The chronos for oauth
+		std::chrono::steady_clock::time_point oauth_start;
+		
 		bool auto_token_continue;
 	
 		// internals
@@ -37,6 +41,8 @@ class Ruqqus {
 		std::vector<RuqqusPost> all_listing_post(std::string sort = "new");
 		std::vector<RuqqusComment> all_listing_comment(void);
 		std::vector<RuqqusGuild> all_listing_guilds(void);
+		
+		// front
 		std::vector<RuqqusPost> front_listing_post(std::string sort = "new");
 
 		// guild

@@ -8,7 +8,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Library files (.cpp)
 add_library(
 				ruqquscpp SHARED
-				src/ruqqus.cpp
+				
+				src/ruqqus/ruqqus.cpp
+				src/ruqqus/json.cpp
+				src/ruqqus/user.cpp
+				src/ruqqus/guild.cpp
+				src/ruqqus/post.cpp
+				src/ruqqus/admin.cpp
+				src/ruqqus/comment.cpp
+				
 				src/http.cpp
 			)
 
