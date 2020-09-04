@@ -324,7 +324,7 @@ bool Ruqqus::guild_available(std::string guildname) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/board_available/"+guildname);
+	server_response = http_get(server+"/api/v1/board_available/"+guildname);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -451,7 +451,7 @@ bool Ruqqus::user_available(std::string username) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/is_available/"+username);
+	server_response = http_get(server+"/api/v1/is_available/"+username);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
