@@ -49,7 +49,7 @@ Generates a token via threading
 std::string Ruqqus::oauth_auto_update_token(void) {
 	// Check if 1 hour passed and update token and chrono
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	long int secs = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
+	long int secs = std::chrono::duration_cast<std::chrono::seconds>(end-oauth_start).count();
 	if(secs > 3600) {
 		// Start the chrono from now
 		oauth_start = std::chrono::steady_clock::now();

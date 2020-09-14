@@ -29,6 +29,8 @@ Ruqqus::Ruqqus(std::string servername) {
 	curlpp::Cleanup raii_cleanup;
 	
 	server = servername;
+	
+	// Start the OAuth chronometer
 	oauth_start = std::chrono::steady_clock::now();
 }
 

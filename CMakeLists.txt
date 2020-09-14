@@ -16,7 +16,7 @@ add_library(
 				src/ruqqus/post.cpp
 				src/ruqqus/admin.cpp
 				src/ruqqus/comment.cpp
-				
+				src/ruqqus/oauth.cpp
 				src/http.cpp
 			)
 
