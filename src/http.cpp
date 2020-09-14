@@ -79,6 +79,8 @@ std::string http_get(std::string url) {
 	easy_handle->setOpt(new curlpp::options::HttpHeader(http_header_create()));
 	easy_handle->setOpt(new curlpp::options::HttpGet(true));
 	easy_handle->perform();
+	
+	delete easy_handle;
 	return write_buffer;
 }
 
@@ -94,6 +96,8 @@ std::string http_post(std::string url, std::string data) {
 	easy_handle->setOpt(new curlpp::options::PostFields(data));
 	easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
 	easy_handle->perform();
+	
+	delete easy_handle;
 	return write_buffer;
 }
 
@@ -125,6 +129,8 @@ std::string http_form_post(std::string url, std::map<std::string,std::string> da
 
 	easy_handle->setOpt(new curlpp::options::HttpPost(form));
 	easy_handle->perform();
+	
+	delete easy_handle;
 	return write_buffer;
 }
 
@@ -141,6 +147,8 @@ std::string http_put(std::string url, std::string data) {
 	easy_handle->setOpt(new curlpp::options::PostFields(data));
 	easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
 	easy_handle->perform();
+	
+	delete easy_handle;
 	return write_buffer;
 }
 
@@ -161,6 +169,9 @@ std::string http_post_http_response(std::string url, std::string data) {
 	easy_handle->perform();
 
 	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
+	
+	delete easy_handle;
+	
 	if(http_status > 299 || http_status < 199) {
 		switch(http_status) {
 			case 525:
