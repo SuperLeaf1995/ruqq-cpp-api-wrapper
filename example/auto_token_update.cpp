@@ -14,15 +14,19 @@
 int main(void) {
 	// Create new client
 	Ruqqus * client = new Ruqqus("https://ruqqus.com");
-	client.client_id = "yourClientId";
-	client.client_secret = "clientSecret";
-	client.refresh_token = "refreshToken";
-	
-	
+	client->client_id = "yourClientId";
+	client->client_secret = "clientSecret";
+	client->refresh_token = "refreshToken";
 	
 	// Updates token
-	for(;;) {
-		client.token = client.oauth_auto_update_token();
+	try {
+		for(;;) {
+			client->token = client->oauth_auto_update_token();
+		}
+	} catch(std::runtime_exception& e) {
+		std::cout << e.what() << std::endl;
 	}
+	
+	delete client;
 	return 0;
 }
