@@ -16,13 +16,6 @@ static std::string oauth_token;
 static std::string cookie;
 static std::string h_useragent;
 
-void http_set_header_useragent(std::string useragent) {
-	h_useragent = useragent;
-	if(h_useragent.empty()) {
-		h_useragent = "ruqqusCpp/1.4";
-	}
-}
-
 void http_set_oauth_token(std::string token) {
 	oauth_token = token;
 }
@@ -49,10 +42,43 @@ curlpp::options::WriteFunction * http_use_write_callback() {
 	return write_cb_opt;
 }
 
+/**
+Check HTTP response codes
+*/
+void http_error_check(long int http_status) {
+	if(http_status > 299 || http_status < 199) {
+		switch(http_status) {
+			case 525:
+				throw std::runtime_error("SSL Handshake Error");
+			case 505:
+				throw std::runtime_error("HTTP Version Not Supported");
+			case 503:
+				throw std::runtime_error("Service Unavailable");
+			case 500:
+				throw std::runtime_error("Internal Server Error");
+			case 451:
+				throw std::runtime_error("Unavailable for Legal Reasons");
+			case 418:
+				throw std::runtime_error("I'm a Teapot");
+			case 405:
+				throw std::runtime_error("Method not Allowed");
+			case 404:
+				throw std::runtime_error("Not found");
+			case 403:
+				throw std::runtime_error("Forbidden");
+			case 401:
+				throw std::runtime_error("Unauthorized");
+			default:
+				throw std::runtime_error("Invalid response code "+std::to_string(http_status));
+		}
+	}
+	return;
+}
+
 std::list<std::string> http_header_create() {
 	// HTTP Header
 	std::list<std::string> header;
-	header.push_back("User-Agent: "+h_useragent);
+	header.push_back("User-Agent: libruqquscpp/1.0");
 	header.push_back("X-Poster-Type: bot");
 	header.push_back("X-API-Library: ruqqus-cpp");
 	if(!oauth_token.empty()) {
@@ -80,7 +106,10 @@ std::string http_get(std::string url) {
 	easy_handle->setOpt(new curlpp::options::HttpGet(true));
 	easy_handle->perform();
 	
+	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	delete easy_handle;
+	http_error_check(http_status);
+	
 	return write_buffer;
 }
 
@@ -97,7 +126,10 @@ std::string http_post(std::string url, std::string data) {
 	easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
 	easy_handle->perform();
 	
+	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	delete easy_handle;
+	http_error_check(http_status);
+	
 	return write_buffer;
 }
 
@@ -130,7 +162,10 @@ std::string http_form_post(std::string url, std::map<std::string,std::string> da
 	easy_handle->setOpt(new curlpp::options::HttpPost(form));
 	easy_handle->perform();
 	
+	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	delete easy_handle;
+	http_error_check(http_status);
+	
 	return write_buffer;
 }
 
@@ -148,7 +183,10 @@ std::string http_put(std::string url, std::string data) {
 	easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
 	easy_handle->perform();
 	
+	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
 	delete easy_handle;
+	http_error_check(http_status);
+	
 	return write_buffer;
 }
 
@@ -169,35 +207,8 @@ std::string http_post_http_response(std::string url, std::string data) {
 	easy_handle->perform();
 
 	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
-	
 	delete easy_handle;
-	
-	if(http_status > 299 || http_status < 199) {
-		switch(http_status) {
-			case 525:
-				throw std::runtime_error("SSL Handshake Error");
-			case 505:
-				throw std::runtime_error("HTTP Version Not Supported");
-			case 503:
-				throw std::runtime_error("Service Unavailable");
-			case 500:
-				throw std::runtime_error("Internal Server Error");
-			case 451:
-				throw std::runtime_error("Unavailable for Legal Reasons");
-			case 418:
-				throw std::runtime_error("I'm a Teapot");
-			case 405:
-				throw std::runtime_error("Method not Allowed");
-			case 404:
-				throw std::runtime_error("Not found");
-			case 403:
-				throw std::runtime_error("Forbidden");
-			case 401:
-				throw std::runtime_error("Unauthorized");
-			default:
-				throw std::runtime_error("Invalid response code "+std::to_string(http_status));
-		}
-	}
+	http_error_check(http_status);
 
 	return write_buffer;
 }

@@ -29,13 +29,13 @@ int main(void) {
 			// get posts
 			posts = client->front_listing_post("new");
 			for(auto& p: posts) {
-				std::cout << "+" << p.guildname << " : " << p.title << " (Id: " << p.id << ")." << std::endl;
+				std::cout << "+" << p.guild_name << " : " << p.title << " (Id: " << p.id << ")." << std::endl;
 			}
 			
 			// wait 10 seconds before next update
 			system("sleep 10");
 		}
-	} catch(std::runtime_exception& e) {
+	} catch(std::runtime_error& e) {
 		std::cout << e.what() << std::endl;
 	}
 	

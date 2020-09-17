@@ -122,7 +122,7 @@ std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort) {
 	if(!sort.empty()) {
 		sorted = "?sort="+sort;
 	}
-	server_response = http_post(server+"/api/v1/front/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/front/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -150,7 +150,7 @@ std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort) {
 	if(!sort.empty()) {
 		sorted = "?sort="+sort;
 	}
-	server_response = http_post(server+"/api/v1/all/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/all/listing?sort="+sort);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

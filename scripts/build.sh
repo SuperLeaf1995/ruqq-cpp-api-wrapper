@@ -1,4 +1,8 @@
-cd..
+#
+# Quick script to build the project
+#
+
+cd ..
 
 mkdir -p build
 cd build

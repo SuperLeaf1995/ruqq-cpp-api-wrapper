@@ -1,4 +1,8 @@
-cd..
+#
+# ONLY use when getting "undefined reference to" errors
+#
+
+cd ..
 
 cd build
 sudo cp libruqquscpp.so /usr/lib/libruqquscpp.so
