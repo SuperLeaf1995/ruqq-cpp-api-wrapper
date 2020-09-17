@@ -38,19 +38,19 @@ class Ruqqus {
 		RuqqusComment comment_info(std::string comment);
 		
 		// all
-		std::vector<RuqqusPost> all_listing_post(std::string sort = "new");
-		std::vector<RuqqusComment> all_listing_comment(void);
-		std::vector<RuqqusGuild> all_listing_guilds(void);
+		std::vector<RuqqusPost> all_listing_post(std::string sort, std::string limit, std::string page);
+		std::vector<RuqqusComment> all_listing_comment(std::string sort, std::string limit, std::string page);
+		std::vector<RuqqusGuild> all_listing_guilds(std::string sort, std::string limit, std::string page);
 		
 		// front
-		std::vector<RuqqusPost> front_listing_post(std::string sort = "new");
+		std::vector<RuqqusPost> front_listing_post(std::string sort, std::string limit, std::string page);
 
 		// guild
 		bool guild_available(std::string guildname);
 		bool guild_join(std::string guildname);
 		bool guild_leave(std::string guildname);
-		std::vector<RuqqusPost> guild_listing_post(std::string guildname, std::string sort = "new");
-		std::vector<RuqqusComment> guild_listing_comment(std::string guildname);
+		std::vector<RuqqusPost> guild_listing_post(std::string guildname, std::string sort, std::string limit, std::string page);
+		std::vector<RuqqusComment> guild_listing_comment(std::string guildname, std::string sort, std::string limit, std::string page);
 		
 		// user
 		bool user_available(std::string username);

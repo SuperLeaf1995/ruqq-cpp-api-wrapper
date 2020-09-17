@@ -18,7 +18,12 @@ int main(void) {
 	client->client_secret = "clientSecret";
 	client->refresh_token = "refreshToken";
 	
-	std::vector<RuqqusPost> posts;
+	std::vector<RuqqusPost> post;
+	std::vector<std::string> id_list;
+	
+	id_list.push_back("0");
+	
+	client->token = client->oauth_update_token();
 	
 	try {
 		// obtain newest posts
@@ -27,19 +32,37 @@ int main(void) {
 			client->token = client->oauth_auto_update_token();
 			
 			// get posts
-			posts = client->front_listing_post("new");
-			for(auto& p: posts) {
-				std::cout << "+" << p.guild_name << " : " << p.title << " (Id: " << p.id << ")." << std::endl;
+			post = client->all_listing_post("new","1","");
+			
+			size_t diff = 0;
+			for(size_t i = 0; i < post.size(); i++) {
+				for(size_t j = 0; j < id_list.size(); j++) {
+					if(post[i].id != id_list[j]) {
+						diff++;
+					}
+				}
+				
+				if(diff == id_list.size()) {
+					id_list.push_back(post[i].id);
+					std::cout << "+" << post[i].guild_name;
+					std::cout << "\r\t\t:" << post[i].title;
+					if(!post[i].url.empty()) {
+						std::cout << " (" + post[i].url + ")";
+					}
+					std::cout << std::endl;
+				}
 			}
 			
+			post.clear();
+			
 			// wait 10 seconds before next update
-			system("sleep 10");
+			system("sleep 1");
 		}
 	} catch(std::runtime_error& e) {
 		std::cout << e.what() << std::endl;
 	}
 	
-	posts.clear();
+	post.clear();
 	delete client;
 	return 0;
 }

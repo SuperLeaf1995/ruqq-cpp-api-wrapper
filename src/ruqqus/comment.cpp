@@ -133,13 +133,13 @@ void Ruqqus::comment_flag(std::string cid) {
 /**
 Gets comment listing
 */
-std::vector<RuqqusComment> Ruqqus::all_listing_comment(void) {
+std::vector<RuqqusComment> Ruqqus::all_listing_comment(std::string sort, std::string limit, std::string page) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
 	bool r;
 	
-	server_response = http_get(server+"/api/v1/front/comments");
+	server_response = http_get(server+"/api/v1/front/comments?sort="+sort+"&limit="+limit+"&page="+page);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -159,13 +159,13 @@ Gets listing of comments in guild
 
 @param guildname The name of the guild to get listing from
 */
-std::vector<RuqqusComment> Ruqqus::guild_listing_comment(std::string guildname) {
+std::vector<RuqqusComment> Ruqqus::guild_listing_comment(std::string guildname, std::string sort, std::string limit, std::string page) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/guild/"+guildname+"/comments");
+	server_response = http_get(server+"/api/v1/guild/"+guildname+"/comments?sort="+sort+"&limit="+limit+"&page="+page);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

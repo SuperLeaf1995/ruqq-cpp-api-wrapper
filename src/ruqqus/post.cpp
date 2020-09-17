@@ -112,7 +112,7 @@ void Ruqqus::post_flag(std::string postid, std::string report_type) {
 /**
 Gets post listing
 */
-std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort) {
+std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort, std::string limit, std::string page) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
@@ -122,7 +122,7 @@ std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort) {
 	if(!sort.empty()) {
 		sorted = "?sort="+sort;
 	}
-	server_response = http_get(server+"/api/v1/front/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/front/listing?sort="+sort+"&limit="+limit+"&page="+page);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -140,7 +140,7 @@ std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort) {
 /**
 Gets post listing
 */
-std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort) {
+std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort, std::string limit, std::string page) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
@@ -150,7 +150,7 @@ std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort) {
 	if(!sort.empty()) {
 		sorted = "?sort="+sort;
 	}
-	server_response = http_get(server+"/api/v1/all/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/all/listing?sort="+sort+"&limit="+limit+"&page="+page);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -170,13 +170,13 @@ Gets listing of posts in guildname
 
 @param guildname The name of the guild to get listing from
 */
-std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname, std::string sort) {
+std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname, std::string sort, std::string limit, std::string page) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/guild/"+guildname+"/listing?sort="+sort);
+	server_response = http_get(server+"/api/v1/guild/"+guildname+"/listing?sort="+sort+"&limit="+limit+"&page="+page);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

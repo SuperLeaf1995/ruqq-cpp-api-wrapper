@@ -32,13 +32,13 @@ RuqqusGuild Ruqqus::guild_info(std::string guildname) {
 /**
 Gets guild listing
 */
-std::vector<RuqqusGuild> Ruqqus::all_listing_guilds(void) {
+std::vector<RuqqusGuild> Ruqqus::all_listing_guilds(std::string sort, std::string limit, std::string page) {
 	Json::Value val;
 	Json::Reader read;
 	std::string server_response;
 	bool r;
 	
-	server_response = http_get(server+"/api/v1/guilds");
+	server_response = http_get(server+"/api/v1/guilds?sort="+sort+"&limit="+limit+"&page="+page);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
