@@ -1,3 +1,5 @@
+#include <algorithm>
+
 // curlpp
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
@@ -156,6 +158,8 @@ std::string http_post(std::string url, std::map<std::string,std::string> map) {
 	curlpp::Easy * easy_handle = new curlpp::Easy();
 	
 	std::string data = http_map_to_url(map);
+	// Remove the question mark as it causes many problems
+	data.erase(remove(data.begin(),data.end(),'?'),data.end());
 	
 	// Perform request
 	easy_handle->setOpt(http_use_write_callback());
