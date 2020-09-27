@@ -138,7 +138,9 @@ RuqqusComment Ruqqus::JSON_to_comment(Json::Value val) {
 	comment.permalink = val["permalink"].asString();
 	comment.post = val["post"].asString();
 	comment.score = val["score"].asLargestInt();
-	comment.title = val["title"].asString();
+	if(val["title"].isString()) {
+		comment.title = val["title"].asString();
+	}
 	comment.upvotes = val["upvotes"].asLargestInt();
 	return comment;
 }
