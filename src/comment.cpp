@@ -19,8 +19,10 @@ RuqqusComment Ruqqus::comment_info(std::string commentid) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
 
-	server_response = http_get(server+"/api/v1/comment/"+commentid);
+	server_response = http_get(server+"/api/v1/comment/"+commentid,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -39,8 +41,8 @@ void Ruqqus::comment_submit(std::string pid, std::string body) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
 	std::map<std::string,std::string> form;
-
 	form.insert(std::pair<std::string,std::string>("parent_fullname","t2_"+pid));
 	form.insert(std::pair<std::string,std::string>("submission",pid));
 	form.insert(std::pair<std::string,std::string>("body",body));
@@ -69,8 +71,8 @@ void Ruqqus::comment_reply(std::string pid, std::string cid, std::string body) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
 	std::map<std::string,std::string> form;
-
 	form.insert(std::pair<std::string,std::string>("parent_fullname","t3_"+cid));
 	form.insert(std::pair<std::string,std::string>("submission",pid));
 	form.insert(std::pair<std::string,std::string>("body",body));
@@ -99,8 +101,10 @@ RuqqusComment Ruqqus::comment_get_in_post(std::string pid, std::string cid) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
 
-	server_response = http_get(server+"/api/v1/post/"+pid+"/comment/"+cid);
+	server_response = http_get(server+"/api/v1/post/"+pid+"/comment/"+cid,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -116,7 +120,9 @@ Votes for a comment
 */
 void Ruqqus::comment_vote(std::string cid, signed char v) {
 	/* v1 dosen't uses cookies like the other one wich dosen't has the v1 */
-	http_post(server+"/api/v1/vote/comment/"+cid+"/"+std::to_string(v));
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/v1/vote/comment/"+cid+"/"+std::to_string(v),data);
 	return;
 }
 
@@ -126,7 +132,9 @@ Flags a comment
 @param cid The Id of the comment
 */
 void Ruqqus::comment_flag(std::string cid) {
-	http_post_http_response(server+"/api/flag/comment/"+cid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/flag/comment/"+cid,data);
 	return;
 }
 
@@ -139,7 +147,12 @@ std::vector<RuqqusComment> Ruqqus::all_listing_comment(std::string sort, std::st
 	std::string server_response;
 	bool r;
 	
-	server_response = http_get(server+"/api/v1/front/comments?sort="+sort+"&limit="+limit+"&page="+page);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	data.insert(std::pair<std::string,std::string>("limit",limit));
+	data.insert(std::pair<std::string,std::string>("page",page));
+	
+	server_response = http_get(server+"/api/v1/front/comments",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -164,8 +177,13 @@ std::vector<RuqqusComment> Ruqqus::guild_listing_comment(std::string guildname, 
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	data.insert(std::pair<std::string,std::string>("limit",limit));
+	data.insert(std::pair<std::string,std::string>("page",page));
 
-	server_response = http_get(server+"/api/v1/guild/"+guildname+"/comments?sort="+sort+"&limit="+limit+"&page="+page);
+	server_response = http_get(server+"/api/v1/guild/"+guildname+"/comments",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

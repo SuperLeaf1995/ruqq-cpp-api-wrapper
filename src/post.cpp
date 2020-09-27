@@ -37,9 +37,12 @@ std::string Ruqqus::post_get_title(std::string postid) {
 	bool r;
 	std::string server_response;
 	
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("url",postid));
+	
 	// Do not confuse by the name, submit actually obtains the
 	// post title via the id
-	server_response = http_get(server+"/api/submit/title?url="+postid);
+	server_response = http_get(server+"/api/submit/title",data);
 	
 	r = read.parse(server_response,val,false);
 	if(!r) {
@@ -60,7 +63,8 @@ Deletes a post
 @param postid The Id of the post
 */
 void Ruqqus::post_delete(std::string postid) {
-	http_post_http_response(server+"/delete_post/"+postid);
+	std::map<std::string,std::string> data;
+	http_post(server+"/delete_post/"+postid,data);
 	return;
 }
 
@@ -70,7 +74,8 @@ Toggles a post to NSFW
 @param postid The Id of the post
 */
 void Ruqqus::post_toggle_nsfw(std::string postid) {
-	http_post_http_response(server+"/api/toggle_post_nsfw/"+postid);
+	std::map<std::string,std::string> data;
+	http_post(server+"/api/toggle_post_nsfw/"+postid,data);
 	return;
 }
 
@@ -80,7 +85,8 @@ Toggles a post to NSFL
 @param postid The Id of the post
 */
 void Ruqqus::post_toggle_nsfl(std::string postid) {
-	http_post_http_response(server+"/api/toggle_post_nsfl/"+postid);
+	std::map<std::string,std::string> data;
+	http_post(server+"/api/toggle_post_nsfl/"+postid,data);
 	return;
 }
 
@@ -91,7 +97,8 @@ Votes for a post
 */
 void Ruqqus::post_vote(std::string postid, signed char v) {
 	/* v1 dosen't uses cookies like the other one wich dosen't has the v1 */
-	http_post_http_response(server+"/api/v1/vote/post/"+postid+"/"+std::to_string(v));
+	std::map<std::string,std::string> data;
+	http_post(server+"/api/v1/vote/post/"+postid+"/"+std::to_string(v),data);
 	return;
 }
 
@@ -105,7 +112,9 @@ void Ruqqus::post_flag(std::string postid, std::string report_type) {
 	// and "guild", wich reports the post to the guildmaster
 	//
 	// If you are making a moderation bot, you should use "guild" type
-	http_post_http_response(server+"/api/flag/post/"+postid,"report_type="+report_type);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("report_type",report_type));
+	http_post(server+"/api/flag/post/"+postid,data);
 	return;
 }
 
@@ -117,12 +126,13 @@ std::vector<RuqqusPost> Ruqqus::front_listing_post(std::string sort, std::string
 	Json::Reader read;
 	std::string server_response;
 	bool r;
-
-	std::string sorted = "";
-	if(!sort.empty()) {
-		sorted = "?sort="+sort;
-	}
-	server_response = http_get(server+"/api/v1/front/listing?sort="+sort+"&limit="+limit+"&page="+page);
+	
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	data.insert(std::pair<std::string,std::string>("limit",limit));
+	data.insert(std::pair<std::string,std::string>("page",page));
+	
+	server_response = http_get(server+"/api/v1/front/listing",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -146,11 +156,12 @@ std::vector<RuqqusPost> Ruqqus::all_listing_post(std::string sort, std::string l
 	std::string server_response;
 	bool r;
 
-	std::string sorted = "";
-	if(!sort.empty()) {
-		sorted = "?sort="+sort;
-	}
-	server_response = http_get(server+"/api/v1/all/listing?sort="+sort+"&limit="+limit+"&page="+page);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	data.insert(std::pair<std::string,std::string>("limit",limit));
+	data.insert(std::pair<std::string,std::string>("page",page));
+	
+	server_response = http_get(server+"/api/v1/all/listing",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -176,7 +187,12 @@ std::vector<RuqqusPost> Ruqqus::guild_listing_post(std::string guildname, std::s
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/guild/"+guildname+"/listing?sort="+sort+"&limit="+limit+"&page="+page);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	data.insert(std::pair<std::string,std::string>("limit",limit));
+	data.insert(std::pair<std::string,std::string>("page",page));
+
+	server_response = http_get(server+"/api/v1/guild/"+guildname+"/listing",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -201,8 +217,10 @@ RuqqusPost Ruqqus::post_info(std::string postid) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
 
-	server_response = http_get(server+"/api/v1/post/"+postid);
+	server_response = http_get(server+"/api/v1/post/"+postid,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

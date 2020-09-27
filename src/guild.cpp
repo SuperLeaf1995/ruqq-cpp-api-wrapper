@@ -20,7 +20,9 @@ RuqqusGuild Ruqqus::guild_info(std::string guildname) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/guild/"+guildname);
+	std::map<std::string,std::string> data;
+
+	server_response = http_get(server+"/api/v1/guild/"+guildname,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -38,7 +40,12 @@ std::vector<RuqqusGuild> Ruqqus::all_listing_guilds(std::string sort, std::strin
 	std::string server_response;
 	bool r;
 	
-	server_response = http_get(server+"/api/v1/guilds?sort="+sort+"&limit="+limit+"&page="+page);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	data.insert(std::pair<std::string,std::string>("limit",limit));
+	data.insert(std::pair<std::string,std::string>("page",page));
+	
+	server_response = http_get(server+"/api/v1/guilds",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -65,8 +72,10 @@ bool Ruqqus::guild_available(std::string guildname) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
 
-	server_response = http_get(server+"/api/v1/board_available/"+guildname);
+	server_response = http_get(server+"/api/v1/board_available/"+guildname,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -87,8 +96,10 @@ bool Ruqqus::guild_join(std::string guildname) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
 
-	server_response = http_post(server+"/api/subscribe/"+guildname);
+	server_response = http_post(server+"/api/subscribe/"+guildname,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -114,7 +125,9 @@ bool Ruqqus::guild_leave(std::string guildname) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_post(server+"/api/unsubscribe/"+guildname);
+	std::map<std::string,std::string> data;
+
+	server_response = http_post(server+"/api/unsubscribe/"+guildname,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");

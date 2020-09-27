@@ -49,6 +49,7 @@ int main(void) {
 					if(!post[i].url.empty()) {
 						std::cout << " (" + post[i].url + ")";
 					}
+					std::cout << '\x07'; // produce a beep :)
 					std::cout << std::endl;
 				}
 			}

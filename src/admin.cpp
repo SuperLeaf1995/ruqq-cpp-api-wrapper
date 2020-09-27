@@ -23,7 +23,11 @@ Bans a user. Requires 3 admin privileges
 @param reason Reason for ban
 */
 void Ruqqus::admin_ban_user(std::string uid, int days, std::string reason, std::string message) {
-	http_post(server+"/api/ban_user/"+uid,"reason="+reason+"&message="+message+"&days="+std::to_string(days));
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("reason",reason));
+	data.insert(std::pair<std::string,std::string>("message",message));
+	data.insert(std::pair<std::string,std::string>("days",std::to_string(days)));
+	http_post(server+"/api/ban_user/"+uid,data);
 	return;
 }
 
@@ -40,8 +44,11 @@ void Ruqqus::admin_unban_user(std::string uid, bool unban_alts) {
 	} else {
 		alt = "false";
 	}
+	
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("alts",alt));
 
-	http_post(server+"/api/unban_user/"+uid,"alts="+alt);
+	http_post(server+"/api/unban_user/"+uid,data);
 	return;
 }
 
@@ -52,7 +59,10 @@ Bans a post. Requires 3 admin privileges
 @param reason Reason for ban
 */
 void Ruqqus::admin_ban_post(std::string pid, std::string reason) {
-	http_post(server+"/api/ban_post/"+pid,"reason="+reason);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("reason",reason));
+	
+	http_post(server+"/api/ban_post/"+pid,data);
 	return;
 }
 
@@ -62,7 +72,9 @@ Unbans a post. Requires 3 admin privileges
 @param pid The Id of the post
 */
 void Ruqqus::admin_unban_post(std::string pid) {
-	http_post(server+"/api/unban_post/"+pid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/unban_post/"+pid,data);
 	return;
 }
 
@@ -72,7 +84,9 @@ Makes a post sticky. Requires 3 admin privileges
 @param pid The Id of the post
 */
 void Ruqqus::admin_sticky_post(std::string pid) {
-	http_post(server+"/api/sticky_post/"+pid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/sticky_post/"+pid,data);
 	return;
 }
 
@@ -82,7 +96,9 @@ Bans a comment. Requires 4 admin privileges
 @param cid The Id of the comment
 */
 void Ruqqus::admin_ban_comment(std::string cid) {
-	http_post(server+"/api/ban_comment/"+cid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/ban_comment/"+cid,data);
 	return;
 }
 
@@ -92,7 +108,9 @@ Unbans a comment. Requires 4 admin privileges
 @param cid The Id of the comment
 */
 void Ruqqus::admin_unban_comment(std::string cid) {
-	http_post(server+"/api/unban_guild/"+cid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/unban_guild/"+cid,data);
 	return;
 }
 
@@ -103,7 +121,10 @@ Bans a guild. Requires 4 admin privileges
 @param reason Reason for ban
 */
 void Ruqqus::admin_ban_guild(std::string bid, std::string reason) {
-	http_post(server+"/api/ban_guild/"+bid,"reason="+reason);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("reason",reason));
+	
+	http_post(server+"/api/ban_guild/"+bid,data);
 	return;
 }
 
@@ -113,7 +134,9 @@ Unbans a guild. Requires 4 admin privileges
 @param bid The Id of the board
 */
 void Ruqqus::admin_unban_guild(std::string bid) {
-	http_post(server+"/api/unban_guild/"+bid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/unban_guild/"+bid,data);
 	return;
 }
 
@@ -123,7 +146,9 @@ Becomes mod of the board automatically. Requires 4 admin privileges
 @param bid The Id of the board
 */
 void Ruqqus::admin_mod_self(std::string bid) {
-	http_post(server+"/api/mod_self/"+bid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/api/mod_self/"+bid,data);
 	return;
 }
 
@@ -138,7 +163,10 @@ Json::Value Ruqqus::admin_user_stat(int days) {
 	bool r;
 	std::string server_response;
 	
-	server_response = http_get(server+"/api/user_stat_data?days="+std::to_string(days));
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("days",std::to_string(days)));
+	
+	server_response = http_get(server+"/api/user_stat_data",data);
 	
 	r = read.parse(server_response,val,false);
 	if(!r) {
@@ -154,7 +182,9 @@ Deletes a post via CSAM nuke (any post can be deleted). Requires 4 admin privile
 @param postid The Id of the post
 */
 void Ruqqus::admin_csam_nuke(std::string postid) {
-	http_post(server+"/admin/csam_nuke/"+postid);
+	std::map<std::string,std::string> data;
+	
+	http_post(server+"/admin/csam_nuke/"+postid,data);
 	return;
 }
 
@@ -167,7 +197,9 @@ void Ruqqus::admin_clear_cache() {
 	bool r;
 	std::string server_response;
 	
-	server_response = http_get(server+"/admin/dump_cache");
+	std::map<std::string,std::string> data;
+	
+	server_response = http_get(server+"/admin/dump_cache",data);
 	
 	r = read.parse(server_response,val,false);
 	if(!r) {

@@ -18,7 +18,9 @@ RuqqusUser Ruqqus::user_me(void) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/identity");
+	std::map<std::string,std::string> data;
+
+	server_response = http_get(server+"/api/v1/identity",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -37,8 +39,10 @@ RuqqusUser Ruqqus::user_info(std::string username) {
 	Json::Reader read;
 	std::string server_response;
 	bool r;
+	
+	std::map<std::string,std::string> data;
 
-	server_response = http_get(server+"/api/v1/user/"+username);
+	server_response = http_get(server+"/api/v1/user/"+username,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -60,7 +64,9 @@ bool Ruqqus::user_available(std::string username) {
 	std::string server_response;
 	bool r;
 
-	server_response = http_get(server+"/api/v1/is_available/"+username);
+	std::map<std::string,std::string> data;
+
+	server_response = http_get(server+"/api/v1/is_available/"+username,data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -78,7 +84,10 @@ std::vector<RuqqusPost> Ruqqus::user_listing_post(std::string username, std::str
 	std::string server_response;
 	bool r;
 	
-	server_response = http_get(server+"/api/v1/user/"+username+"/listing?sort="+sort);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("sort",sort));
+	
+	server_response = http_get(server+"/api/v1/user/"+username+"/listing",data);
 	r = read.parse(server_response,val,false);
 	if(!r) {
 		throw std::runtime_error("Cannot parse JSON value");
@@ -100,7 +109,8 @@ Follows a user
 @param username The username of the user
 */
 void Ruqqus::user_follow(std::string username) {
-	http_post(server+"/api/follow/"+username);
+	std::map<std::string,std::string> data;
+	http_post(server+"/api/follow/"+username,data);
 	return;
 }
 
@@ -110,7 +120,8 @@ Unfollows a user
 @param username The username of the user
 */
 void Ruqqus::user_unfollow(std::string username) {
-	http_post(server+"/api/unfollow/"+username);
+	std::map<std::string,std::string> data;
+	http_post(server+"/api/unfollow/"+username,data);
 	return;
 }
 
@@ -125,7 +136,10 @@ void Ruqqus::user_exile(std::string username, std::string bid) {
 	bool r;
 	std::string server_response;
 	
-	server_response = http_post(server+"/mod/exile/"+bid,"username="+username);
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("username",username));
+	
+	server_response = http_post(server+"/mod/exile/"+bid,data);
 
 	if(!server_response.empty()) {
 		r = read.parse(server_response,val,false);

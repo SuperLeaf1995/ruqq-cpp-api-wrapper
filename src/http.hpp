@@ -15,10 +15,8 @@ size_t http_write_callback(void * ptr, size_t size, size_t nmemb);
 curlpp::options::WriteFunction * http_use_write_callback();
 std::list<std::string> http_header_create();
 
-std::string http_get(std::string url);
-std::string http_post(std::string url, std::string data = "");
-std::string http_form_post(std::string url, std::map<std::string,std::string> data);
-std::string http_put(std::string url, std::string data = "");
-std::string http_post_http_response(std::string url, std::string data = "");
+std::string http_get(std::string url, std::map<std::string,std::string> map);
+std::string http_post(std::string url, std::map<std::string,std::string> map);
+std::string http_form_post(std::string url, std::map<std::string,std::string> map);
 
 #endif // HTTP_HPP_INCLUDED

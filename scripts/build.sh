@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Quick script to build the project
 #

@@ -18,11 +18,13 @@ std::string Ruqqus::oauth_update_token(void) {
 	bool r;
 	std::string server_response;
 
-	server_response = http_post(server+"/oauth/grant",
-		"client_id="+client_id+
-		"&client_secret="+client_secret+
-		"&refresh_token="+refresh_token+
-		"&grant_type=refresh");
+	std::map<std::string,std::string> data;
+	data.insert(std::pair<std::string,std::string>("client_id",client_id));
+	data.insert(std::pair<std::string,std::string>("client_secret",client_secret));
+	data.insert(std::pair<std::string,std::string>("refresh_token",refresh_token));
+	data.insert(std::pair<std::string,std::string>("grant_type","refresh"));
+
+	server_response = http_post(server+"/oauth/grant",data);
 	
 	r = read.parse(server_response,val,false);
 	if(!r) {
@@ -36,7 +38,7 @@ std::string Ruqqus::oauth_update_token(void) {
 
 	std::string token = val["access_token"].asString();
 	if(token.empty()) {
-		throw std::runtime_error("Server threw invalid message");
+		throw std::runtime_error("Empty token");
 	}
 
 	http_set_oauth_token(token);

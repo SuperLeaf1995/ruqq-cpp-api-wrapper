@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # ONLY use when getting "undefined reference to" errors
 #
@@ -10,7 +11,6 @@ cd ..
 cd src
 sudo mkdir -p /usr/include/ruqquscpp
 sudo cp *.hpp /usr/include/ruqquscpp
-sudo cp ruqqus/*.hpp /usr/include/ruqquscpp
 cd ..
 cd scripts
 echo 'Script is done'

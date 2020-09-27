@@ -16,6 +16,28 @@ static std::string oauth_token;
 static std::string cookie;
 static std::string h_useragent;
 
+std::string http_map_to_url(std::map<std::string,std::string> map) {
+	std::string final_str;
+	bool use_ampere = false;
+	
+	for(std::map<std::string,std::string>::iterator i = map.begin(); i != map.end(); i++) {
+		// Obtain pairs from map
+		std::string k = i->first;
+		std::string v = i->second;
+		
+		// Only append if not empty
+		if(!k.empty() && !v.empty()) {
+			// Result appended will be k=v
+			final_str += ((use_ampere == true)?"&":"?");
+			final_str += k+"="+v;
+			
+			// Next calls will use the & operator
+			use_ampere = true;
+		}
+	}
+	return final_str;
+}
+
 void http_set_oauth_token(std::string token) {
 	oauth_token = token;
 }
@@ -27,6 +49,9 @@ void http_set_cookie(std::string cookieval) {
 /*
 Write callback and other support functions
 */
+
+// Create a mutex to only allow access to one thread at one time
+// Or else everything messes up
 std::string write_buffer;
 std::mutex http_write_callback_mutex;
 size_t http_write_callback(void * ptr, size_t size, size_t nmemb) {
@@ -46,7 +71,7 @@ curlpp::options::WriteFunction * http_use_write_callback() {
 Check HTTP response codes
 */
 void http_error_check(long int http_status) {
-	if(http_status > 299 || http_status < 199) {
+	if(!(http_status >= 200 && http_status <= 299)) {
 		switch(http_status) {
 			case 525:
 				throw std::runtime_error("SSL Handshake Error");
@@ -77,27 +102,36 @@ void http_error_check(long int http_status) {
 
 std::list<std::string> http_header_create() {
 	// HTTP Header
+	// Needed stuff
 	std::list<std::string> header;
 	header.push_back("User-Agent: libruqquscpp/1.0");
-	header.push_back("X-Poster-Type: bot");
-	header.push_back("X-API-Library: ruqqus-cpp");
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
-	}
-	if(!cookie.empty()) {
+	} if(!cookie.empty()) {
 		header.push_back("Set-Cookie: session_ruqqus="+cookie+"; Domain=.ruqqus.com; Path=/; Secure; HttpOpnly");
 	}
+	
+	// Headers we give to ruqqie so he knows what we are
+	header.push_back("X-API-Poster-Type: bot");
+	header.push_back("X-API-Library: libruqquscpp");
+	header.push_back("X-API-Supports-Cookie: Yes");
+	header.push_back("X-API-Supports-Auth: Yes");
+	header.push_back("X-API-Supports-Unofficial: Yes");
 	return header;
 }
 
 /*
 HTTP Requests Functions
 */
-
-std::string http_get(std::string url) {
+/**
+@brief Sends a GET request to a given URL, accepted by most instances
+*/
+std::string http_get(std::string url, std::map<std::string,std::string> map) {
 	// Write function
 	write_buffer = "";
 	curlpp::Easy * easy_handle = new curlpp::Easy();
+	
+	url += http_map_to_url(map);
 	
 	// Perform request
 	easy_handle->setOpt(http_use_write_callback());
@@ -113,10 +147,15 @@ std::string http_get(std::string url) {
 	return write_buffer;
 }
 
-std::string http_post(std::string url, std::string data) {
+/**
+@brief Sends a POST request to a given URL, accepted by most instances
+*/
+std::string http_post(std::string url, std::map<std::string,std::string> map) {
 	// Write function
 	write_buffer = "";
 	curlpp::Easy * easy_handle = new curlpp::Easy();
+	
+	std::string data = http_map_to_url(map);
 	
 	// Perform request
 	easy_handle->setOpt(http_use_write_callback());
@@ -133,6 +172,9 @@ std::string http_post(std::string url, std::string data) {
 	return write_buffer;
 }
 
+/**
+@brief Sends a x-www-form-urlencoded form, this type of form is accepted by most instances
+*/
 std::string http_form_post(std::string url, std::map<std::string,std::string> data) {
 	// Write function
 	write_buffer = "";
@@ -166,49 +208,5 @@ std::string http_form_post(std::string url, std::map<std::string,std::string> da
 	delete easy_handle;
 	http_error_check(http_status);
 	
-	return write_buffer;
-}
-
-std::string http_put(std::string url, std::string data) {
-	// Write function
-	write_buffer = "";
-	curlpp::Easy * easy_handle = new curlpp::Easy();
-	
-	// Perform request
-	easy_handle->setOpt(http_use_write_callback());
-	easy_handle->setOpt(new curlpp::options::Url(url));
-	easy_handle->setOpt(new curlpp::options::HttpHeader(http_header_create()));
-	easy_handle->setOpt(new curlpp::options::CustomRequest("PUT"));
-	easy_handle->setOpt(new curlpp::options::PostFields(data));
-	easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
-	easy_handle->perform();
-	
-	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
-	delete easy_handle;
-	http_error_check(http_status);
-	
-	return write_buffer;
-}
-
-/**
-Sends a POST request AND validates that the HTTP response is OK (no errors).
-*/
-std::string http_post_http_response(std::string url, std::string data) {
-	// Write function
-	write_buffer = "";
-	curlpp::Easy * easy_handle = new curlpp::Easy();
-	
-	// Perform request
-	easy_handle->setOpt(http_use_write_callback());
-	easy_handle->setOpt(new curlpp::options::Url(url));
-	easy_handle->setOpt(new curlpp::options::HttpHeader(http_header_create()));
-	easy_handle->setOpt(new curlpp::options::PostFields(data));
-	easy_handle->setOpt(new curlpp::options::PostFieldSize(data.length()));
-	easy_handle->perform();
-
-	long int http_status = curlpp::infos::ResponseCode::get(*easy_handle);
-	delete easy_handle;
-	http_error_check(http_status);
-
 	return write_buffer;
 }
