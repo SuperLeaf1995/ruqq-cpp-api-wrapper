@@ -118,15 +118,15 @@ Converts comment to RuqqusComment
 */
 RuqqusComment Ruqqus::JSON_to_comment(Json::Value val) {
 	RuqqusComment comment;
-	comment.author = val["author"].asString();
-	comment.body = val["body"].asString();
-	comment.body_html = val["body_html"].asString();
+	if(val["author"].isString()) { comment.author = val["author"].asString(); }
+	if(val["body"].isString()) { comment.body = val["body"].asString(); }
+	if(val["body_html"].isString()) { comment.body_html = val["body_html"].asString(); }
 	comment.created_utc = val["created_utc"].asLargestInt();
 	comment.downvotes = val["downvotes"].asLargestInt();
 	comment.edited_utc = val["edited_utc"].asLargestInt();
-	comment.fullname = val["fullname"].asString();
-	comment.guild_name = val["guild_name"].asString();
-	comment.id = val["id"].asString();
+	if(val["fullname"].isString()) { comment.fullname = val["fullname"].asString(); }
+	if(val["guild_name"].isString()) { comment.guild_name = val["guild_name"].asString(); }
+	if(val["id"].isString()) { comment.id = val["id"].asString(); }
 	comment.is_archived = val["is_archived"].asBool();
 	comment.is_banned = val["is_banned"].asBool();
 	comment.is_deleted = val["is_deleted"].asBool();
@@ -134,13 +134,11 @@ RuqqusComment Ruqqus::JSON_to_comment(Json::Value val) {
 	comment.is_nsfw = val["is_nsfw"].asBool();
 	comment.is_offensive = val["is_offensive"].asBool();
 	comment.level = val["level"].asLargestInt();
-	comment.parent = val["parent"].asString();
-	comment.permalink = val["permalink"].asString();
-	comment.post = val["post"].asString();
+	if(val["parent"].isString()) { comment.parent = val["parent"].asString(); }
+	if(val["permalink"].isString()) { comment.permalink = val["permalink"].asString(); }
+	if(val["post"].isString()) { comment.post = val["post"].asString(); }
 	comment.score = val["score"].asLargestInt();
-	if(val["title"].isString()) {
-		comment.title = val["title"].asString();
-	}
+	if(val["title"].isString()) { comment.title = val["title"].asString(); }
 	comment.upvotes = val["upvotes"].asLargestInt();
 	return comment;
 }
