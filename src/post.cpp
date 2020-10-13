@@ -75,7 +75,7 @@ Toggles a post to NSFW
 */
 void Ruqqus::post_toggle_nsfw(std::string postid) {
 	std::map<std::string,std::string> data;
-	http_post(server+"/api/toggle_post_nsfw/"+postid,data);
+	http_post(server+"/api/v1/toggle_post_nsfw/"+postid,data);
 	return;
 }
 
@@ -86,7 +86,7 @@ Toggles a post to NSFL
 */
 void Ruqqus::post_toggle_nsfl(std::string postid) {
 	std::map<std::string,std::string> data;
-	http_post(server+"/api/toggle_post_nsfl/"+postid,data);
+	http_post(server+"/api/v1/toggle_post_nsfl/"+postid,data);
 	return;
 }
 
