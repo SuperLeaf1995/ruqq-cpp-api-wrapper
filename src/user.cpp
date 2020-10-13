@@ -52,6 +52,28 @@ RuqqusUser Ruqqus::user_info(std::string username) {
 }
 
 /**
+Obtains information about username and returns a RuqqusUser class
+
+@param uid The id of the user to obtain information from it
+*/
+RuqqusUser Ruqqus::user_info_by_id(std::string uid) {
+	Json::Value val;
+	Json::Reader read;
+	std::string server_response;
+	bool r;
+	
+	std::map<std::string,std::string> data;
+
+	server_response = http_get(server+"/api/v1/user/by_id/"+uid,data);
+	r = read.parse(server_response,val,false);
+	if(!r) {
+		throw std::runtime_error("Cannot parse JSON value");
+	}
+	
+	return JSON_to_user(val);
+}
+
+/**
 Checks if username is available
 
 @param username Name of the user to be checked

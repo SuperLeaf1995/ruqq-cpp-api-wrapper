@@ -34,6 +34,7 @@ class Ruqqus {
 		RuqqusGuild guild_info(std::string guildname);
 		RuqqusUser user_me(void);
 		RuqqusUser user_info(std::string username);
+		RuqqusUser user_info_by_id(std::string uid);
 		RuqqusPost post_info(std::string post);
 		RuqqusComment comment_info(std::string comment);
 		

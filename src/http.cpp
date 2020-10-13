@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 
 // curlpp
@@ -106,7 +107,7 @@ std::list<std::string> http_header_create() {
 	// HTTP Header
 	// Needed stuff
 	std::list<std::string> header;
-	header.push_back("User-Agent: libruqquscpp/1.0");
+	header.push_back("User-Agent: libruqquscpp/1.0 "+std::to_string(random()));
 	if(!oauth_token.empty()) {
 		header.push_back("Authorization: Bearer "+oauth_token);
 	} if(!cookie.empty()) {
@@ -114,11 +115,11 @@ std::list<std::string> http_header_create() {
 	}
 	
 	// Headers we give to ruqqie so he knows what we are
-	header.push_back("X-API-Poster-Type: bot");
-	header.push_back("X-API-Library: libruqquscpp");
-	header.push_back("X-API-Supports-Cookie: Yes");
-	header.push_back("X-API-Supports-Auth: Yes");
-	header.push_back("X-API-Supports-Unofficial: Yes");
+	header.push_back("X-User-Type: Bot");
+	header.push_back("X-Library: libruqquscpp");
+	header.push_back("X-Supports: cookie auth redirect");
+	header.push_back("X-Linux-Is-Better-Than-Windows: True");
+	
 	return header;
 }
 
